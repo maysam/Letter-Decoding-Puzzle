@@ -1,0 +1,90 @@
+<html>
+<head>
+	<script type="text/javascript" src="jquery.min.js"></script>
+<!--
+	<script type="text/javascript" src="jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="css/mint-choc/jquery-ui-1.8.18.custom.css" type="text/css" media="all" />
+-->
+	<script type="text/javascript" src="WordList6000.js"></script>
+	<script type="text/javascript" src="init.js"></script>
+	<script type="text/javascript" src="display.js"></script>
+	<script type="text/javascript" src="events.js"></script>
+</head>
+<body>
+<div style="width:300px; border: 2px solid; padding:10px; display:none;" id="setting_panel">
+<div style="text-align:center">
+New Game Settings
+</div>
+<div style="text-align:left">
+Number of Words <input style="left: 200px; position:absolute;" size=2 value=6 />
+</div>
+<div style="text-align:left">
+Maximum word size <input style="left: 200px; position:absolute;" size=2 value=6 />
+</div>
+<div style="text-align:left;">
+<div style="left:50px; position:absolute; font-size:12px;">
+(in letters)
+</div>
+<br>
+</div>
+<div style="text-align:left">
+Difficulty 
+<input type="radio" checked /> Normal
+<input type="radio" /> Hard
+</div>
+<div style="text-align:left">
+<input type=button value=Start onClick="document.getElementById('setting_panel').style.display='none';" />
+</div>
+</div>
+<canvas id="canvas" style="background-color:#BBBBBB" width="600" height="800" ></canvas>
+<script>
+	var tree = new Array();
+	for (var i = 0; i < dictionary.length; i++) {
+		_word = dictionary[i];
+		if( _word.length<3)
+			continue;
+		temp = tree;
+		for (var j = 0; j < _word.length; j++) {
+			index = _word[j].charCodeAt(0)-65;
+			last = temp.lastIndexOf(index) + 1;
+			if ( last == 0 ) {
+				last = temp.push(index);
+				temp.push(new Array());
+			}
+			temp = temp[last];
+		};
+	};
+
+	/* test tree structure
+	temp = tree;
+	while(temp.length>0){
+		console.log(ALPHABET.charAt(temp[0]));
+		console.log(String.fromcharAt(temp[0]+65));	//	no need to ALPHABET constant
+		temp =temp[1];
+	}
+	*/
+
+	/*
+	find where each word length starts
+	l = dictionary[0].length+1;
+	for (var i = 0; i < dictionary.length; i++) {
+		if(dictionary[i].length<l) {
+			console.log(i,dictionary[i]);
+			l = dictionary[i].length;
+		}
+	};
+	5567 starts "WE"
+	*/
+	function getRandomWord() {
+		index = Math.floor(Math.random()*5567);
+		return { index:index, word:dictionary[index] };
+	}
+	var context = $("#canvas")[0].getContext("2d");
+	init();
+	drawPuzzle();
+	//$("#canvas")[0].addEventListener("click", mouseClick, false);
+	$("#canvas")[0].onclick = mouseClick;
+
+</script>
+</body>
+</html>
