@@ -22,57 +22,85 @@
 			for(var j=0; j<ROWS; j++) {
 				var left = PUZZLE_LEFT+SIZE*i;
 				var top = PUZZLE_TOP+SIZE*j;
+				if(puzzle[i][j] != null && puzzle[i][j] != -1) {
+					g = GROUP[puzzle[i][j].charCodeAt(0)-65];
+				} else {
+					g = 0;
+				}
                 context.lineWidth = 0.5;			
-				context.fillStyle = COLORS[puzzle[i][j]];
+				context.fillStyle = COLORS[g];
 				context.fillRect(left ,top ,SIZE,SIZE);
-				if (i>0 && puzzle[i][j]>0 && puzzle[i][j]==puzzle[i-1][j]) {
+
+				context.fillStyle = COLORS[0];
+				context.font = 'bold 20px sans-serif';
+				if (ALPHABET.lastIndexOf(puzzle[i][j]) != -1)
+            		context.fillText(puzzle[i][j], left + SIZE/4,top + SIZE/8);
+				
+				if (i>0 && g>0 && puzzle[i-1][j] != null && puzzle[i-1][j] != -1 && g==GROUP[puzzle[i-1][j].charCodeAt(0)-65]) {
 					// draw a vertical line between similar color tiles                    
                     context.strokeRect(PUZZLE_LEFT+SIZE*i-.5,PUZZLE_TOP+SIZE*j,0,SIZE);
 				}
-				if (j>0 && puzzle[i][j]>0 && puzzle[i][j]==puzzle[i][j-1]) {
+				if (j>0 && g>0 && puzzle[i][j-1] != null && puzzle[i][j-1] != -1 && g==GROUP[puzzle[i][j-1].charCodeAt(0)-65]) {
 					// draw a horizontal line between similar color tiles
                     context.strokeRect(PUZZLE_LEFT+SIZE*i-.5,PUZZLE_TOP+SIZE*j,SIZE,0);
 				}
-                context.stroke(); 
+
+				//	show the chosen alphabet in the puzzle
+				//	if multiple words, just the last one, 				
+				index1 = detectWord(i,j,-1);
+				if (index1 == -1)
+					continue;
+				index2 = detectWord(i,j,index1);
+				if (index1 == index2) {
+					//	one word
+					_word = wordList[index1];
+					//	has there been any guesses
+					if (guesses[index1] == undefined || guesses[index1].length == 0) {
+						continue;
+					};
+					//	show the last guess
+					l = guesses[index1].length-1;
+					k = i + j - _word.startx - _word.starty;
+					//for (var j = 0; j < guesses[index1][l].length; j++) 
+					{
+						//	show letter by letter
+					x = _word.startx + k*_word.xp;
+					y = _word.starty + k*_word.yp;
+					left = PUZZLE_LEFT+SIZE*x;
+					top = PUZZLE_TOP+SIZE*y;
+					
+					context.fillStyle = COLORS[0];
+					context.font = 'bold 20px sans-serif';
+	            	context.fillText(guesses[index1][l][k], left + SIZE/4,top + SIZE/8);
+					};
+				} else {
+					//	two word intersection
+				}
 			}
 		}
-		//	show the chosen alphabet in the puzzle
-		//	if multiple words, just the last one, 				
-		for (var i = 0; i < wordList.length; i++) {
-			_word = wordList[i];
-			//	has there been any guesses
-			if (guesses[i] == undefined) {
-				continue;
-			};
-			//	show the last guess
-			l = guesses[i].length-1;
-			if(l >= 0)
-			for (var j = 0; j < guesses[i][l].length; j++) {
-				//	show letter by letter
-				x = _word.startx + j*_word.xp;
-				y = _word.starty + j*_word.yp;
-				left = PUZZLE_LEFT+SIZE*x;
-				top = PUZZLE_TOP+SIZE*y;
-				
-				context.fillStyle = COLORS[0];
-				context.font = 'bold 20px sans-serif';
-            	context.fillText(guesses[i][l][j], left + SIZE/4,top + SIZE/8);
-			};
-		};
+				function drawLetterOnBoard(index, i,j) {
 
-				
+				}
 
         if (word) {
+        	//	draw line around the selected word to highlight
         	context.lineWidth = 3;
             context.strokeStyle = "#ffffff";
             context.strokeRect(PUZZLE_LEFT+word.startx*SIZE-1, PUZZLE_TOP+word.starty*SIZE-1, word.xp*word.length*SIZE+SIZE+2, word.yp*word.length*SIZE+SIZE+2);
             context.stroke();
+            /* no need to clear anymore	
             context.fillStyle = "#BBBBBB";
             context.fillRect(PUZZLE_LEFT, PUZZLE_TOP+SIZE*(ROWS+1), SIZE*COLUMNS, SIZE*5);
+            */
             offset = 0;
             while(offset <= word.length) {
                 index = puzzle[word.startx + offset*word.xp][word.starty + offset*word.yp];
-                drawAlphaBar(index,offset++);
+                if (index != null) {
+					g = GROUP[index.charCodeAt(0)-65];
+				} else {
+					g = 0;
+				}
+                drawAlphaBar(g,offset++);
             }
 			
 			// draw the guesses with an X at the end so they can be deleted

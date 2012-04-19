@@ -38,23 +38,39 @@ Difficulty
 </div>
 <canvas id="canvas" style="background-color:#BBBBBB" width="600" height="800" ></canvas>
 <script>
-	var tree = new Array();
+	var tree = [0,null];
 	for (var i = 0; i < dictionary.length; i++) {
 		_word = dictionary[i];
 		if( _word.length<3)
 			continue;
 		temp = tree;
 		for (var j = 0; j < _word.length; j++) {
-			index = _word[j].charCodeAt(0)-65;
+			//	where should the character be listed at
+			index = _word[j]; //	.charCodeAt(0)-65;
+			//	is this number in the list yet?
 			last = temp.lastIndexOf(index) + 1;
 			if ( last == 0 ) {
+				// if not, add the ascii code and push an empty array after it
 				last = temp.push(index);
-				temp.push(new Array());
+				temp.push([j+1,temp]);
 			}
+			//	now temp is holding the new array or old one for this word
 			temp = temp[last];
-		};
-	};
 
+		};
+		//	push something to indicated if you are up to here, you have a valid word
+		temp.push('YES');
+		//	if tree has yes then take it as a word
+//		temp.push(temp);
+	};
+	function getWord(node) {
+		var parent = node[1];
+		if (parent == null)
+			return '';
+		var last = parent.lastIndexOf(node);
+		var letter = parent[last-1];
+		return getWord(parent) + letter;
+	}
 	/* test tree structure
 	temp = tree;
 	while(temp.length>0){
@@ -75,8 +91,10 @@ Difficulty
 	};
 	5567 starts "WE"
 	*/
-	function getRandomWord() {
-		index = Math.floor(Math.random()*5567);
+	function getRandomWord(max_length) {
+		do {
+			index = Math.floor(Math.random()*5567);
+		} while(dictionary[index].length > max_length)
 		return { index:index, word:dictionary[index] };
 	}
 	var context = $("#canvas")[0].getContext("2d");
