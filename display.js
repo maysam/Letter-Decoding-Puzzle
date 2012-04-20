@@ -31,11 +31,6 @@
 				context.fillStyle = COLORS[g];
 				context.fillRect(left ,top ,SIZE,SIZE);
 
-				context.fillStyle = COLORS[0];
-				context.font = 'bold 20px sans-serif';
-				if (ALPHABET.lastIndexOf(puzzle[i][j]) != -1)
-            		context.fillText(puzzle[i][j], left + SIZE/4,top + SIZE/8);
-				
 				if (i>0 && g>0 && puzzle[i-1][j] != null && puzzle[i-1][j] != -1 && g==GROUP[puzzle[i-1][j].charCodeAt(0)-65]) {
 					// draw a vertical line between similar color tiles                    
                     context.strokeRect(PUZZLE_LEFT+SIZE*i-.5,PUZZLE_TOP+SIZE*j,0,SIZE);
@@ -50,20 +45,54 @@
 				index1 = detectWord(i,j,-1);
 				if (index1 == -1)
 					continue;
+				//	so there is a word
 				index2 = detectWord(i,j,index1);
-				if (index1 == index2) {
-					//	one word
-					_word = wordList[index1];
+				//	is there another word
+				
+				guess1 = (guesses[index1] != undefined && guesses[index1].length > 0);
+				guess2 = (guesses[index2] != undefined && guesses[index2].length > 0);
+				//	to eliminate when there is no guesses
+				if (!guess1 && !guess2) {
 					//	has there been any guesses
-					if (guesses[index1] == undefined || guesses[index1].length == 0) {
-						continue;
-					};
+					context.fillStyle = COLORS[0];
+					context.font = 'bold 10px sans-serif';
+            		context.fillText(puzzle[i][j], left + SIZE/4,top + SIZE/8);
+					continue;
+				}
+				if (!guess1 && guess2) {
+					index1 = index2;
+					guess1 = guess2;
+				} else if (!guess2 && guess1) {
+					index2 = index1;
+					guess2 = index1;
+				}
+				var ch1 = '';
+				var ch2 = '';
+				if (index1 != -1) {
+					_word = wordList[index1];
 					//	show the last guess
 					l = guesses[index1].length-1;
 					k = i + j - _word.startx - _word.starty;
-					//for (var j = 0; j < guesses[index1][l].length; j++) 
-					{
-						//	show letter by letter
+					ch1 = guesses[index1][l][k];
+				}
+				if(index2 != index1) {
+					_word = wordList[index2];
+					//	show the last guess
+					l = guesses[index2].length-1;
+					k = i + j - _word.startx - _word.starty;
+					ch2 = guesses[index2][l][k];
+					if (ch1 == ch2) {
+						index1 = index2;
+						guess1 = guess2;
+					}
+				}
+				if (index1 == index2) {
+					//	one word
+					_word = wordList[index1];
+					//	show the last guess
+					l = guesses[index1].length-1;
+					k = i + j - _word.startx - _word.starty;
+					//	show letter by letter
 					x = _word.startx + k*_word.xp;
 					y = _word.starty + k*_word.yp;
 					left = PUZZLE_LEFT+SIZE*x;
@@ -71,9 +100,37 @@
 					
 					context.fillStyle = COLORS[0];
 					context.font = 'bold 20px sans-serif';
-	            	context.fillText(guesses[index1][l][k], left + SIZE/4,top + SIZE/8);
-					};
+	            	context.fillText(ch1, left + SIZE/4,top + SIZE/8);
 				} else {
+					//	show both
+					_word = wordList[index1];
+					//	show the last guess
+					l = guesses[index1].length-1;
+					k = i + j - _word.startx - _word.starty;
+					//	show letter by letter
+					x = _word.startx + k*_word.xp;
+					y = _word.starty + k*_word.yp;
+					left = PUZZLE_LEFT+SIZE*x;
+					top = PUZZLE_TOP+SIZE*y;
+					
+					context.fillStyle = COLORS[0];
+					context.font = 'bold 14px sans-serif';
+	            	context.fillText(ch1, left + SIZE/4 - SIZE/8,top + SIZE/8 - SIZE/8);
+
+					//	show guess 2
+					_word = wordList[index2];
+					//	show the last guess
+					l = guesses[index2].length-1;
+					k = i + j - _word.startx - _word.starty;
+					//	show letter by letter
+					x = _word.startx + k*_word.xp;
+					y = _word.starty + k*_word.yp;
+					left = PUZZLE_LEFT+SIZE*x;
+					top = PUZZLE_TOP+SIZE*y;
+					
+					context.fillStyle = COLORS[0];
+					context.font = 'bold 14px sans-serif';
+	            	context.fillText(ch2, left + SIZE/4 + SIZE/4,top + SIZE/8 + SIZE/4);
 					//	two word intersection
 				}
 			}
@@ -126,7 +183,7 @@
         var selected_data = ALPHA[group];
         for (var i=0; i<5; i++) {
         	//	drawing the decoders under the puzzle
-        	var left = PUZZLE_LEFT + SIZE + (SIZE+5)*offset;
+        	var left = PUZZLE_LEFT + (SIZE+5)*offset;
         	var top = PUZZLE_TOP+SIZE*(i+ROWS+1);
             context.fillStyle = COLORS[group];
             context.fillRect(left, top, SIZE, SIZE);
@@ -145,7 +202,7 @@
         }
         for (var i=0; i<5; i++) {
         	//	drawing boxes to indicate the selected letter
-        	var left = PUZZLE_LEFT + SIZE + (SIZE+5)*offset;
+        	var left = PUZZLE_LEFT + (SIZE+5)*offset;
         	var top = PUZZLE_TOP+SIZE*(i+ROWS+1);
             context.strokeStyle = "#000000";
             context.lineWidth = 1;

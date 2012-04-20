@@ -98,10 +98,27 @@ Difficulty
 		return { index:index, word:dictionary[index] };
 	}
 	var context = $("#canvas")[0].getContext("2d");
-	init();
+	do {
+		init();
+		var board = puzzle.slice(0);
+		for(var i=0; i<COLUMNS; i++) {
+			board[i] = board[i].slice(0);
+		}		
+		isConnected(board, wordList[0].startx, wordList[0].starty);
+		notConnected = false;
+		for(var i=0; i<COLUMNS; i++) {
+			for(var j=0; j<ROWS; j++) {
+				if (board[i][j] != null && board[i][j] != -1) {
+					notConnected = true;
+					break;
+				}
+			}
+		}
+	} while (notConnected || wordCount<9);
 	drawPuzzle();
 	//$("#canvas")[0].addEventListener("click", mouseClick, false);
 	$("#canvas")[0].onclick = mouseClick;
+	$("#canvas")[0].ondoubleclick = mouseDoubleClick;
 
 </script>
 </body>
