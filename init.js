@@ -1,15 +1,50 @@
+"use strict";
+
 var HORIZONTAL = 1;
 var VERTICAL = 2;
 var MIN_LENGTH = 3;
 var MAX_LENGTH = 6;
-var SIZE = 30;
-var COLUMNS = 11;
-var ROWS = 9;
 
-var PUZZLE_LEFT = 50;
-var PUZZLE_TOP = 70;
+function getWord(node) {
+	//	converts tree node to word
+	var parent = node[1];
+	if (parent == null)
+		return '';
+	var last = parent.indexOf(node);
+	var letter = parent[last-1];
+	return getWord(parent) + letter;
+}
 
-var COLORS = ['#000000', '#ef3e44', '#fe8700', '#fdff00', '#26e122', '#585aed'];
+function isEmpty(arr) {
+	if ( !arr || arr.length==0 ) {
+		return true
+	}
+	for (var i = 0; i < arr.length; i++) {
+		if(arr[i])
+			return false;
+	};
+	return true;
+}
+function isFull(arr) {
+	if ( !arr || arr.length==0 ) {
+		return false
+	}
+	for (var i = 0; i < arr.length; i++) {
+		if(!arr[i])
+			return false
+	}
+	return true;
+}
+
+function getRandomWord(min_length, max_length) {
+	//	gets random word directly from the dictionary
+	do {
+		index = Math.floor(Math.random()*dictionary.length)
+	} while(dictionary[index].length > max_length || dictionary[index].length < min_length)
+	return dictionary[index]
+}
+
+var COLORS = ['#000000', '#ef3e44', '#fe8700', '#fdff00', '#26e122', '#585aed', '#ffffff'];
 var ALPHA = new Array(
                     new Array(),
                     new Array('A', 'D', 'N', 'F', 'W'),
@@ -25,37 +60,76 @@ var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     //	use String.fromCharCode(65) instead
 
 var puzzle, wordCount, wordList, word;	//	word is the selected code
-var current_guess;
-var guesses = new Array();
+var redWords;	//	list of indices of words which need fix
+    //	list of words in red box
+
+//	is the last guess repeated word
+var repeatFlag
+
+var current_guess
+var guesses, hints
+
+var time = 0, timing = false
+
+var clockHandle = setInterval(function clock() {
+	if (timing) {
+		time ++
+		update_time()
+	}
+}, 1000)
+
+
+
+function Word() {
+	this.index = 0;
+	//	start point
+	this.startx = 0;
+	this.starty = 0;
+	//	end point
+	this.endx = 0;
+	this.endy = 0;
+	//	direction xp=1 is horizontal yp=1 is vertical , logically of course
+	this.xp = 0;
+	this.yp = 0;
+	this.length = 0;
+	this.data = [];
+	this.hint = [];
+}
 
 function init() {
-    "use strict";
+	//	console.log('initializing ...');
 	//	create puzzle
-	puzzle = new Array();
-
+	puzzle = [];
+	guesses = [];
+	hints = [];
 	for (var i=0; i<COLUMNS; i++) {
-		puzzle[i] = new Array();
+		puzzle[i] = [];
+		hints[i] = [];
 	}
 	//	initialize puzzle
 	for (var i=0; i<COLUMNS; i++) {
 		for(var j=0; j<ROWS; j++) {
 			puzzle[i][j] = null;
+			hints[i][j] = null;
 		}
 	}
 
-    wordList = new Array();	//	information about the words in the puzzle 
+    wordList = [];	//	information about the words in the puzzle 
     						//	{ startx:0, starty:0, xp:0, yp:0, endx:0, endy:0, length:0, data:Array(), choices:Array() };
     wordCount = 0;		//	number of words
     word = null;		//	selected word
 
-	for(var i=0; i<COLUMNS; i+=2) {
-		obj = { index:0, startx:0, starty:0, endx:0, xp:0, yp:0, endy:0, length:0, data:Array(), choices:Array() };
+	for(var i=0; i<COLUMNS; i+=2+Math.floor(Math.random()*1.1)) {
+		if (wordCount*2+2 > $("#number_of_words").val()) {
+			continue;
+		}
+		obj = new Word();
 		//	choose a word
-		_word = getRandomWord(ROWS-3);
-		_word = _word.word;
+		_word = getRandomWord(MIN_LENGTH, MAX_LENGTH);
+
 		//	then put it in the row randomly
-		j = Math.floor(Math.random()*(ROWS-_word.length));
-		console.log(i,j,_word);
+		j = Math.floor(Math.random()*(ROWS-_word.length+1));
+		//	console.log(i,j,_word);
 		obj.startx = i;
 		obj.starty = j;
 		obj.length = _word.length-1;
@@ -63,7 +137,9 @@ function init() {
 		obj.endx = i;
 		obj.endy = j + obj.length;
 		obj.index = wordCount;
+		guesses[wordCount] = [[]];
 		wordList[wordCount++] = obj;
+
 		if (j > 0) {
 			puzzle[i][j-1] = -1;
 		}
@@ -113,59 +189,52 @@ function init() {
 function fillHorizontals() {
 	var count = 0;
 	for(var j=0; j<ROWS; j++) {
-		added = false;
-		tube = new Array();
-		last_start = 0;
+		var tube = [];
+		var last_start = 0;
 		for(var i=0; i<COLUMNS; i++) {
 			if ( puzzle[i][j] == -1 ) {
-				if(tube.length>2)
-				if(processTube(last_start, j,tube)) {
-					//	true means something was added
-					count++;
-					added = true;
+				if(tube.length >= MIN_LENGTH) {
+					count += processTube(last_start, j,tube)
 				}
 					
 				//	empty tube, maybe we can fit in more
-				tube = new Array();
-				//	puzzle[i][j] = null;
+				tube = [];
 				last_start = i+1;
 			} else {
 				tube.push(puzzle[i][j]);
 				
 			}
 		}
-		if(tube.length>2)
-		if(processTube(last_start, j,tube)) {
-			//	true means something was added
-			count++;
-			added = true;
-		};
-		if (added) {
-			//j++;
-		};
+		if(tube.length >= MIN_LENGTH) {
+			count += processTube(last_start, j,tube)
+		}
 	}
 	return count;
 }
 function processTube(i, j, tube) {
-	original = tube.slice(0);
-	originali = i;
-	//	console.log('processTube', i,j,tube.slice(0));
+	if (wordCount == $("#number_of_words").val()) {
+		return 0;
+	}
+
+	var original = tube.slice(0)	//	copy tube array into variable called original
+	var originali = i
 	//	tube must be connected, so check if it has value?
-	output = new Array();
+	var output = [];
+	var choices = [];
 			
 	while(tube != null && tube.length >= 3 && tube.some(function (x) { return (x != null) })) {
-
 		//	process tube
-		example = new Array(tree);
-		lastCrossing = -1;
-		for (var k = 0; k < tube.length; k++) {
-			//console.log(example.length, ':', output.length);
-			temp_example = new Array();
+		var example = [tree];
+		var lastCrossing = -1;
+		for (var k = 0; k < tube.length && k < MAX_LENGTH; k++) {
+			//	no word longer than MAX_LENGTH
+			var temp_example = [];
 			for (var n = 0; n < example.length; n++) {
-				next = example[n];
-				//console.log(n,example.length);
-				if (next.lastIndexOf('YES') != -1 && tube[k]==null) {
+				var next = example[n];
+				if(!next) continue;
+				if (next.indexOf('YES') != -1  && tube[k]==null) {
 					if (lastCrossing != -1 ) {	//	and far enough
+						//console.log(next)
 						output.push(i,next);
 					}
 					// but it can be part of longer word as well
@@ -177,7 +246,7 @@ function processTube(i, j, tube) {
 					}
 				} else {
 					lastCrossing = k;
-					index = next.lastIndexOf(tube[k]);
+					index = next.indexOf(tube[k]);
 					if (index != -1) {
 						temp_example.push(next[index+1]);
 					}
@@ -186,107 +255,120 @@ function processTube(i, j, tube) {
 			example = temp_example;
 		};
 		for (var n = 0; n < example.length; n++) {
-			if (example[n].lastIndexOf('YES') != -1) {
-				if (lastCrossing != -1 ) {	//	and far enough
+			if(!example[n]) continue;
+			if (example[n].indexOf('YES') != -1) {
+				if (lastCrossing != -1 && tube.length==example[n][0]) {	//	and far enough
 					output.push(i, example[n]);
 				}
 			}
 		}
-		
-		//console.log('try', i, tube.slice(0), output.length);
 		i++;
 		while(tube.shift() != null)
 			i++;
 	}
+//	console.log(output)
 	if(output.length>0) {
-		max = '';
-		maxi = -1;
+		var max = '';
+		var maxi = -1;
 		for (var k = 1; k < output.length; k+=2) {
-			_word = getWord(output[k]);
+			var _word = getWord(output[k]);
 			if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
+				//	find the biggest possible word
 				maxi = output[k-1];
 				max = _word;
 			}
-		};
-		if (maxi >= 0) {
+		}
+		if (maxi != -1) {
 			//	check to see if we have more than 3 sq on either side to work on
-			choices = [maxi, max];
+			choices.push(maxi, max)
+			//	console.log('found: ', max, maxi)
 			if(maxi-originali>3) {
 				//	fit one before
-				console.log('checking before');
-				_max = '';
-				_maxi = -1;
+				//	console.log('checking before');
+				max = ''
+				maxi = -1
 				for (var k = 1; k < output.length; k+=2) {
-					_word = getWord(output[k]);
-					_wordi = output[k-1];
-					if(_wordi+_word.length<maxi)
-					if(_max.length<_word.length || (_max.length==_word.length && Math.random()>0.5)) {
-						_maxi = output[k-1];
-						_max = _word;
+					var _word = getWord(output[k])
+					if (wordList.indexOf(_word) != -1 || choices.indexOf(_word) != -1) {
+						//	try another word
+						continue;
+					};
+					var _wordi = output[k-1];
+					if(_wordi+_word.length< choices[0])
+					if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
+						maxi = output[k-1]
+						max = _word
 					}
 				};
-				if(_maxi != -1) {
-					choices.push(_maxi, _max);
+				if(maxi != -1) {
+					choices.push(maxi, max)
+					//	console.log('checking before : ',max);
 				}
 			}
-			if(original.length-max.length-maxi>3) {
+			if(original.length-max.length-choices[0]>3) {
 				//	fit one after
-				console.log('checking after');
-				_max = '';
-				_maxi = -1;
+				max = ''
+				maxi = -1
 				for (var k = 1; k < output.length; k+=2) {
-					_word = getWord(output[k]);
-					_wordi = output[k-1];
-					if(maxi+max.length<_wordi)
-					if(_max.length<_word.length || (_max.length==_word.length && Math.random()>0.5)) {
-						_maxi = output[k-1];
-						_max = _word;
+					var _word = getWord(output[k])
+					if (wordList.indexOf(_word) != -1 || choices.indexOf(_word) != -1) {
+						//	try another word
+						continue
 					}
-				};
-				if(_maxi != -1) {
-					choices.push(_maxi, _max);
+					var _wordi = output[k-1]
+					if(choices[0]+choices[1].length<_wordi)
+					if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
+						//	console.log('checking: ', choices[0],choices[1].length,_wordi)
+						maxi = _wordi
+						max = _word
+					}
+				}
+				if(maxi != -1) {
+					choices.push(maxi, max)
+					//	console.log('putting after : ',max);
 				}
 			}
-
 			for (var c = 0; c < choices.length; c+=2) {
-				maxi = choices[c];
-				max = choices[c+1];
+				if (wordCount == $("#number_of_words").val()) {
+					return c/2
+				}
+				maxi = choices[c]
+				max = choices[c+1]
 				//	create word for it
-				obj = { index:0, startx:0, starty:0, endx:0, xp:0, yp:0, endy:0, length:0, data:Array(), choices:Array() };
+				var obj = new Word()
 				//	choose a word
-				_word = max;
+				_word = max
 				//	then put it in the row randomly
-				console.log(maxi,j,_word);
-				obj.startx = maxi;
-				obj.starty = j;
-				obj.length = _word.length-1;
-				obj.xp = 1;
-				obj.endx = maxi + obj.length;
-				obj.endy = j;
-				obj.index = wordCount;
-				wordList[wordCount++] = obj;
+				//	console.log(maxi,j,_word);
+				obj.startx = maxi
+				obj.starty = j
+				obj.length = _word.length-1
+				obj.xp = 1
+				obj.endx = maxi + obj.length
+				obj.endy = j
+				obj.index = wordCount
+				guesses[wordCount] = [[]]
+				wordList[wordCount++] = obj
 				if (maxi> 0) {
-					puzzle[maxi-1][j] = -1;
+					puzzle[maxi-1][j] = -1
 				}
 				if (maxi +obj.length +1 < COLUMNS) {
-					puzzle[maxi+obj.length+1][j] = -1;
-				};
-				for (counter = 0; counter < _word.length; counter++) {
-					puzzle[maxi+counter][j] = _word[counter];
-					obj.data[counter] = _word[counter];
+					puzzle[maxi+obj.length+1][j] = -1
+				}
+				for (var counter = 0; counter < _word.length; counter++) {
+					puzzle[maxi+counter][j] = _word[counter]
+					obj.data[counter] = _word[counter]
 					if(j>0)
 						if(puzzle[maxi+counter][j-1] == null)
-							puzzle[maxi+counter][j-1] = -1;
+							puzzle[maxi+counter][j-1] = -1
 					if(j<ROWS-1)
 						if(puzzle[maxi+counter][j+1] == null)
-							puzzle[maxi+counter][j+1] = -1;
-					
+							puzzle[maxi+counter][j+1] = -1
 				}
-			};
-			return true;
+			}
 		}
-		return false;
 	}	//	if
+	return choices.length/2
 }
 
 

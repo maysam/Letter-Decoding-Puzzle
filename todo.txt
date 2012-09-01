@@ -1,0 +1,31 @@
+-a timer and a stop button. Timer is red until all red highlights are gone. Then it turns green and a stop button appears next to the timer.
+When a player clicks on the stop button the timer stops and no further score is added. 
+
+-Ability to auto submit high score, time and game settings to database. (Name, email, Number of words, time to complete, score.) 
+There would be a high score ranking for each of the "number of words" setting. So there's a high score for the 9 word games, the 10 word games and so on.
+The program would check the database to see if a high score has been achieved, if so the details are sent to the database and the player is notified. It would also check for best time. if a time record is achieved then details are sent to the database and the player is notified.
+
+Prepare for mobile version:
+-Resize for iPhone- allow for 50pixels height of ad space at bottom of screen
+-remove Logo,score and the side buttons and replace with a settings button at the bottom of the screen. When clicked on a new screen appears :
+
+I would like the default number of words to be set initially to 15 in the game. But still have the option to change in settings. Also please remove duplicate words.
+
+
+   The score would only be submitted upon clicking "STOP", so only completed games would be eligible as the stop button only appears when all red highlights are gone.
+
+9 Word Puzzles
+1-Score: 56, Time: 10:22  Players Name
+2-Score: 56, Time: 12:31           "
+3-Score: 54, Time:  9:43            "
+
+10 Word Puzzles
+1-Score: 51, Time: 13:22  Players Name
+2-Score: 50, Time: 10:31            "
+3-Score: 49, Time:  9:33             "
+
+Score determines placing and if same score then the time determines first place. 
+
+Web interface. I would like to show the high scores on a webpage.
+
+                for the iPhone version I am wondering if it would be better to limit the word length to 6 letters max, because of the limited screen space. 

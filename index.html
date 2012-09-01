@@ -1,125 +1,100 @@
 <html>
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">  
+	<link rel="stylesheet" href="style.css" type="text/css" />
 	<script type="text/javascript" src="jquery.min.js"></script>
-<!--
-	<script type="text/javascript" src="jquery-ui.min.js"></script>
-	<link rel="stylesheet" href="css/mint-choc/jquery-ui-1.8.18.custom.css" type="text/css" media="all" />
--->
-	<script type="text/javascript" src="WordList6000.js"></script>
+	<script type="text/javascript" src="Wordlist.js"></script>
+	<script type="text/javascript" src="checklist.js"></script>
 	<script type="text/javascript" src="init.js"></script>
-	<script type="text/javascript" src="display.js"></script>
 	<script type="text/javascript" src="events.js"></script>
+	<script type="text/javascript" src="display.js"></script>
+	<script type="text/javascript" src="index.js"></script>
 </head>
 <body>
-<div style="width:300px; border: 2px solid; padding:10px; display:none;" id="setting_panel">
-<div style="text-align:center">
-New Game Settings
-</div>
-<div style="text-align:left">
-Number of Words <input style="left: 200px; position:absolute;" size=2 value=6 />
-</div>
-<div style="text-align:left">
-Maximum word size <input style="left: 200px; position:absolute;" size=2 value=6 />
-</div>
-<div style="text-align:left;">
-<div style="left:50px; position:absolute; font-size:12px;">
-(in letters)
-</div>
-<br>
-</div>
-<div style="text-align:left">
-Difficulty 
-<input type="radio" checked /> Normal
-<input type="radio" /> Hard
-</div>
-<div style="text-align:left">
-<input type=button value=Start onClick="document.getElementById('setting_panel').style.display='none';" />
-</div>
-</div>
-<canvas id="canvas" style="background-color:#BBBBBB" width="600" height="800" ></canvas>
-<script>
-	var tree = [0,null];
-	for (var i = 0; i < dictionary.length; i++) {
-		_word = dictionary[i];
-		if( _word.length<3)
-			continue;
-		temp = tree;
-		for (var j = 0; j < _word.length; j++) {
-			//	where should the character be listed at
-			index = _word[j]; //	.charCodeAt(0)-65;
-			//	is this number in the list yet?
-			last = temp.lastIndexOf(index) + 1;
-			if ( last == 0 ) {
-				// if not, add the ascii code and push an empty array after it
-				last = temp.push(index);
-				temp.push([j+1,temp]);
-			}
-			//	now temp is holding the new array or old one for this word
-			temp = temp[last];
+<script type="text/javascript">
+	var isiOS = false
+	var agent = navigator.userAgent.toLowerCase()
+	if(agent.indexOf('iphone') >= 0 || agent.indexOf('ipad') >= 0){
+	       isiOS = true
+	}
 
-		};
-		//	push something to indicated if you are up to here, you have a valid word
-		temp.push('YES');
-		//	if tree has yes then take it as a word
-//		temp.push(temp);
-	};
-	function getWord(node) {
-		var parent = node[1];
-		if (parent == null)
-			return '';
-		var last = parent.lastIndexOf(node);
-		var letter = parent[last-1];
-		return getWord(parent) + letter;
+	if (isiOS) {
+		var SIZE = 29
+		var COLUMNS = 10
+		var ROWS = 9
+		var MAX_LENGTH = Math.ceil(COLUMNS/2);
+		var PUZZLE_LEFT = 15
+		var PUZZLE_TOP = 15
+		var width = 320
+		var height = 480
+	} else {
+		//	0nduj
+		//	m433cp
+		var SIZE = 30
+		var COLUMNS = 11
+		var ROWS = 9
+		var MAX_LENGTH = Math.ceil(COLUMNS/2);
+		var PUZZLE_LEFT = SIZE/2
+		var PUZZLE_TOP = SIZE/2
+		var width = (COLUMNS+1)*SIZE
+		var height = (7.5+ROWS)*SIZE
 	}
-	/* test tree structure
-	temp = tree;
-	while(temp.length>0){
-		console.log(ALPHABET.charAt(temp[0]));
-		console.log(String.fromcharAt(temp[0]+65));	//	no need to ALPHABET constant
-		temp =temp[1];
-	}
-	*/
-
-	/*
-	find where each word length starts
-	l = dictionary[0].length+1;
-	for (var i = 0; i < dictionary.length; i++) {
-		if(dictionary[i].length<l) {
-			console.log(i,dictionary[i]);
-			l = dictionary[i].length;
-		}
-	};
-	5567 starts "WE"
-	*/
-	function getRandomWord(max_length) {
-		do {
-			index = Math.floor(Math.random()*5567);
-		} while(dictionary[index].length > max_length)
-		return { index:index, word:dictionary[index] };
-	}
+	document.write('<canvas id="canvas" style="position:absolute; background-color:#dddddd; left: 50%; margin-left:-'+width*0.5+'px;  width:'+width+'px;" width="'+width+'px" height="'+height+'" ></canvas>')		
 	var context = $("#canvas")[0].getContext("2d");
-	do {
-		init();
-		var board = puzzle.slice(0);
-		for(var i=0; i<COLUMNS; i++) {
-			board[i] = board[i].slice(0);
-		}		
-		isConnected(board, wordList[0].startx, wordList[0].starty);
-		notConnected = false;
-		for(var i=0; i<COLUMNS; i++) {
-			for(var j=0; j<ROWS; j++) {
-				if (board[i][j] != null && board[i][j] != -1) {
-					notConnected = true;
-					break;
-				}
-			}
-		}
-	} while (notConnected || wordCount<9);
-	drawPuzzle();
-	//$("#canvas")[0].addEventListener("click", mouseClick, false);
-	$("#canvas")[0].onclick = mouseClick;
-	$("#canvas")[0].ondoubleclick = mouseDoubleClick;
-
 </script>
+<img src="logo.jpg" style="position:absolute; top:20; left: 50%; margin-left: -77px; display:none;">
+<div style="height:450px; position:absolute; margin-top:-225px; width:400px; margin-left:-200px;" id="rules_div" class="centerDiv">
+	<img src="rules.jpg" height="450" id="rules_image">
+</div>
+<div style="width:300px; border: 10px solid; position:absolute; background-color:white; height:290px; margin-left: -160px; margin-top: -160px;" id="setting_panel" class="centerDiv">
+<div style="text-align:center">
+<h2>Game Settings</h2>
+</div>
+<div style="text-align:left; margin:10px;">
+	Number of Words
+	<select id="number_of_words" style="left: 200px; position:absolute;">
+		<option>9</option>
+		<option>10</option>
+		<option>11</option>
+		<option>12</option>
+		<option>13</option>
+		<option>14</option>
+		<option>15</option>
+	</select>
+</div>
+<div style="text-align:left; margin:10px; display:none;">
+	Maximum word size
+	<input id="maximum_word_size" style="left: 200px; position:absolute;" size=2 value=5 /> <div style="float:right">4 - 9</div>
+<div style="left:50px; position:absolute; top:120px; font-size:12px;">
+	(in letters)
+</div>
+</div>
+<div style="text-align:left; margin:20px; display:none;">
+Difficulty 
+<input id="normal_game" name="difficulty" type="radio" checked /> Normal
+<input id="hard_game" name="difficulty" type="radio" /> Hard
+</div>
+<div style="text-align:center">
+<h3>Score Submission</h3>
+</div>
+<div style="text-align:left; margin:20px;">
+Submit Details
+<input id="submit_details" name="difficulty" type="radio" checked /> Yes
+<input id="dont_submit_details" name="difficulty" type="radio" /> No
+</div>
+<div style="text-align:left; margin:10px;">
+	Full name
+	<input id="fullname" style="left: 100px; position:absolute;" size=25 value="firstname lastname" />
+</div>
+<div style="text-align:left; margin:10px;">
+	Email
+	<input id="email" style="left: 100px; position:absolute;" size=25 value="email@domain.com" />
+</div>
+<div style="text-align:center; margin-top: 20px;">
+<input type=button value="Save" id="saveButton" style="width:150px" />
+</div>
+</div>
+<img id="backButton" src="back.png">
+<img id="options" src="options.png">
 </body>
 </html>

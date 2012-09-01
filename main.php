@@ -1,11 +1,10 @@
-var dictionary = new Array();
-<?php
+var <?php echo $argv[1]; ?>  = [<?php
 do {
 		$current_line = fgets(STDIN,1024);
 		$current_line = strtoupper(trim($current_line));
-		if ($current_line != '') {
-			echo "dictionary.push('$current_line');\r\n";
+		$len = strlen($current_line);
+		if ($len >= 3 && $len <= 6) {
+			echo "'$current_line',";
 		}
 } while ($current_line != '');
-?>
-dictionary.sort(function(a,b){return b.length - a.length})
+?>]
