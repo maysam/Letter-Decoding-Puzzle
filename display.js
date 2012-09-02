@@ -413,10 +413,10 @@ function drawPuzzle() {
 			scroll_index = 0
 		}
 		// draw the guesses with an X at the end so they can be deleted
-		
-		for (var i = scroll_index; i < 5+scroll_index && i < guesses[current_index].length; i++) {
+		_scroll_index = Math.floor(scroll_index)
+		for (var i = _scroll_index; i < 5+_scroll_index && i < guesses[current_index].length; i++) {
 			// if last word is repeated is hint is full, not show it
-			var j = i - scroll_index
+			var j = i - _scroll_index
 			if (i==guesses[current_index].length-1) {
 				var _guess = guesses[current_index][i];
 				if (word.hint.join() == word.data.join() && guesses[current_index].some(function (x) { return (x.join() == _guess.join() && x !== _guess) }))
@@ -464,11 +464,16 @@ function drawPuzzle() {
 			bar_offset = scroll_index*(SIZE*5-6-bar_length)/(max - 5)
 			context.strokeRect(x_left + SIZE  , x_top  , 10, SIZE*5)
 			context.fillRect(x_left + SIZE +3 , x_top +3 +bar_offset  , 4, bar_length)
-			events.push([x_left + SIZE, x_top , 10, SIZE*5, function (x, y) { 
+			events.push([x_left, x_top , 10+SIZE*2, SIZE*5, function (x, y) { 
 				max = guesses[current_index].length
 				if (max <= 5)
 					return false
-				scroll_index = Math.floor((y - x_top)/(SIZE*5-6)*(max - 4))
+				_scroll_index = (y - x_top)/(SIZE*5-6)*(max - 4)
+				if (_scroll_index <= max - 5) {
+					scroll_index = _scroll_index
+				} else {
+					scroll_index = max - 5
+				}
 			}])
 		}
 		

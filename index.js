@@ -151,6 +151,36 @@ $(window).load(function () {
 	$(window).bind('touchstart click', mouseClick);
 	//	window.onclick = mouseClick
 	window.ondblclick = mouseDoubleClick;
+	function mouseMove(e) {
+
+        e=e.originalEvent
+        e = e || window.event;
+        if (!e.which && e.button) {
+            if      (e.button & 1) e.which = 1;
+            else if (e.button & 4) e.which = 2;
+            else if (e.button & 2) e.which = 3;
+        }
+        if (e.which == 1) {
+        	//	scroll if scrollbar is there
+
+			var x = (e.touches) ? e.touches[0].pageX : e.pageX;
+			var y = (e.touches) ? e.touches[0].pageY : e.pageY;
+
+			x = x - $("#canvas").offset().left
+			y = y - $("#canvas").offset().top
+
+			for (var i = events.length - 1; i >= 0; i--) {
+				var ev = events[i]
+				if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3]) {
+					ev[4](x, y)
+					drawPuzzle()
+					continue
+				}
+			}
+
+        };
+	}
+	window.onmousemove = mouseMove
 	$("#rules_image")[0].onclick = function() {
 		$("#rules_div").hide();
 	}
