@@ -3,7 +3,7 @@
 var HORIZONTAL = 1;
 var VERTICAL = 2;
 var MIN_LENGTH = 3;
-var MAX_LENGTH = 6;
+var MAX_LENGTH = 6+1;
 
 function getWord(node) {
 	//	converts tree node to word
@@ -69,12 +69,33 @@ var repeatFlag
 var current_guess
 var guesses, hints
 
+var scroll_index
+
+var guessList = []
+function resetGuessList() {
+	guessList = []
+}
+function addGuess(word_index) {
+	var guess = guesses[word_index][guesses[word_index].length-1].join('')
+	var key = word_index+' '+guess
+	guessList.push(key)
+}
+function getGuessIndex(word_index, guess_index) {
+	var guess = guesses[word_index][guess_index].join('')
+	var key = word_index+' '+guess
+	return guessList.indexOf(key)
+}
+function removeGuess(word_index, guess_index) {
+	var index = getGuessIndex(word_index, guess_index)
+	if (index >= 0)
+		guessList.splice(index, 1)
+}
+
 var time = 0, timing = false
 
 var clockHandle = setInterval(function clock() {
 	if (timing) {
 		time ++
-		update_time()
 	}
 }, 1000)
 

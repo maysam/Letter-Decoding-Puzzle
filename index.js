@@ -106,6 +106,7 @@ function newGame() {
 	MIN_LENGTH = 3
 	MAX_LENGTH = $("#maximum_word_size").val()
 	tries = 0
+	resetGuessList()
 	do {
 		tries++
 		if (tries>100)
@@ -182,10 +183,12 @@ $(window).load(function () {
 				alert('Please fill the name field')
 				return false
 			}
+			/*
 			if ($('#email').val() == '') {
 				alert('Please fill the email field')
 				return false
 			}
+			*/
 			if (supports_html5_storage()) {
 				localStorage.fullname = $('#fullname').val()
 				localStorage.email = $('#email').val()

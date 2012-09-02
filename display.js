@@ -3,7 +3,7 @@ function calculateScore() {
 	if (!wordList)
 		return 0;
 	for (var i = 0; i < wordList.length; i++) {
-		points += (guesses[i][0].length)*(guesses[i].length-1)-wordList[i].hint.join('').length
+		points += (guesses[i][0].length)*(guesses[i].length-1)	//	no more penalty for hints -wordList[i].hint.join('').length
 	}
 	return points;
 }
@@ -30,38 +30,9 @@ function countLetters() {
 	return letters
 }
 
-function update_time() {
-	var left = PUZZLE_LEFT + 6.4*SIZE;
-	left = width - SIZE*4.2
-	var top = PUZZLE_TOP+SIZE*(ROWS+6);
-
-	context.fillStyle    = "#cccccc";
-	context.fillRect(left, top, SIZE*2.0, SIZE*0.8);
-	context.strokeStyle    = "#666666";
-	context.strokeRect(left, top, SIZE*2.0, SIZE*0.8);
-
-	if (redWords && redWords.length) {
-		context.fillStyle = 'red'
-	} else {
-		context.fillStyle = 'green'
-	}
-	context.font = 'bold 18px sans-serif';
-	display_time = time
-	if (display_time>3600) {
-		display_time = Math.floor(display_time/60)
-	}
-	seconds = display_time % 60
-	if (seconds<10)
-		seconds = '0' + seconds
-	minutes = Math.floor(display_time / 60)
-	if (minutes<10)
-		minutes = '0' + minutes
-	context.fillText( minutes+':'+seconds, left + SIZE*1.0, top + SIZE*0.4)
-}
 var events = []
 
 function drawMenu() {
-	events = []
 	var left_offset = 0
 	if (isiOS) {
     	var left = PUZZLE_LEFT-.33*SIZE
@@ -147,6 +118,7 @@ function setShadow(status, color) {
 	}
 }
 function drawPuzzle() {
+	events = []
 	context.canvas.width = context.canvas.width;	
 	context.textBaseline = 'middle';
     context.textAlign = "center";
@@ -359,53 +331,20 @@ function drawPuzzle() {
 				}
 			}
 			if (ch1 != null) {
-				if (index1 == index2 ) {
-					//	one word
-					_word = wordList[index1];
-					//	show the last guess
-					l = guesses[index1].length-1;
-					k = i + j - _word.startx - _word.starty;
-					//	show letter by letter
-					x = _word.startx + k*_word.xp;
-					y = _word.starty + k*_word.yp;
-					left = PUZZLE_LEFT+SIZE*x;
-					top = PUZZLE_TOP+SIZE*y;
-					
-					context.fillStyle = COLORS[0];
-					context.font = 'bold 20px sans-serif';
-	            	context.fillText(ch1, textLeft, textTop);
-				} else {
-					//	show both
-					_word = wordList[index1];
-					//	show the last guess
-					l = guesses[index1].length-1;
-					k = i + j - _word.startx - _word.starty;
-					//	show letter by letter
-					x = _word.startx + k*_word.xp;
-					y = _word.starty + k*_word.yp;
-					left = PUZZLE_LEFT+SIZE*x;
-					top = PUZZLE_TOP+SIZE*y;
-					
-					context.fillStyle = COLORS[0];
-					context.font = 'bold 14px sans-serif';
-	            	context.fillText(ch1, textLeft - SIZE/4 , textTop - SIZE/4);
-
-					//	show guess 2
-					_word = wordList[index2];
-					//	show the last guess
-					l = guesses[index2].length-1;
-					k = i + j - _word.startx - _word.starty;
-					//	show letter by letter
-					x = _word.startx + k*_word.xp;
-					y = _word.starty + k*_word.yp;
-					left = PUZZLE_LEFT+SIZE*x;
-					top = PUZZLE_TOP+SIZE*y;
-					
-					context.fillStyle = COLORS[0];
-					context.font = 'bold 14px sans-serif';
-	            	context.fillText(ch2, textLeft + SIZE/4, textTop + SIZE/4);
-					//	two word intersection
+				if (index1 != index2) {
+					//	only show last guess
+					//	-2 since last guess is not final yet
+					gi1 = getGuessIndex(index1, guesses[index1].length-2)
+					gi2 = getGuessIndex(index2, guesses[index2].length-2)
+					if (gi2 > gi1) {
+						index1 = index2
+						ch1 = ch2
+					}
 				}
+				context.fillStyle = COLORS[0];
+				context.font = 'bold 20px sans-serif';
+            	context.fillText(ch1, textLeft, textTop);
+
 			}
 		}
 	}
@@ -468,21 +407,28 @@ function drawPuzzle() {
             drawAlphaBar(g,offset++);
         }
 		
+		
+		max = guesses[current_index].length
+		if (scroll_index > max - 5) {
+			scroll_index = 0
+		}
 		// draw the guesses with an X at the end so they can be deleted
-		for (var i = 0; i < guesses[word.index].length; i++) {
+		
+		for (var i = scroll_index; i < 5+scroll_index && i < guesses[current_index].length; i++) {
 			// if last word is repeated is hint is full, not show it
-			if (i==guesses[word.index].length-1) {
-				var _guess = guesses[word.index][i];
-				if (word.hint.join() == word.data.join() && guesses[word.index].some(function (x) { return (x.join() == _guess.join() && x !== _guess) }))
+			var j = i - scroll_index
+			if (i==guesses[current_index].length-1) {
+				var _guess = guesses[current_index][i];
+				if (word.hint.join() == word.data.join() && guesses[current_index].some(function (x) { return (x.join() == _guess.join() && x !== _guess) }))
 					continue 
 			}
 			for (var k = 0; k <= word.length + 1; k++) {
-	        	var left = PUZZLE_LEFT + (SIZE+4)*(word.length + 0.7) + k * (SIZE-5) + (4-word.length)*0.75*SIZE;
+	        	var left = PUZZLE_LEFT + (SIZE+4)*(word.length + 0.7) + k * (SIZE-5) + (4-word.length)*0.75*SIZE + 5;
 
 //	        	var left = PUZZLE_LEFT + (SIZE+4)*(word.length + 0.7) + (word.length+1) * (SIZE-5) + (word.length+1) * (SIZE-5);
 
-	        	var top = PUZZLE_TOP+SIZE*(ROWS+.5 + i);
-				if ( i < guesses[word.index].length-1 && k == word.length+1 ) {
+	        	var top = PUZZLE_TOP+SIZE*(ROWS+.5 + j);
+				if ( i < guesses[current_index].length-1 && k == word.length+1 ) {
 					if (word.hint.join() != word.data.join()) {
 						//	can remove only if all are not hinted
 //							context.fillText('X', left + SIZE,top + SIZE/2);
@@ -502,19 +448,33 @@ function drawPuzzle() {
 						}
 					}
 				} else {
-					if ( guesses[word.index][i][k] != undefined ) {
+					if ( guesses[current_index][i][k] != undefined ) {
 						context.font = 'bold 20px sans-serif';
-						context.fillText(guesses[word.index][i][k], left + SIZE/2 - 2,top + SIZE/2 - 2 );
+						context.fillText(guesses[current_index][i][k], left + SIZE/2 - 2,top + SIZE/2 - 2 );
 					} else if (k <= word.length) {
-						context.lineWidth = 0.5;
+						context.lineWidth = 1;
 						context.strokeRect(left+2 ,top+2 , SIZE-10, SIZE-10);
 					}
 				}
         	}
     	}
+
+		if (max > 5) {
+			bar_length = (SIZE*5-6) * (5/max)
+			bar_offset = scroll_index*(SIZE*5-6-bar_length)/(max - 5)
+			context.strokeRect(x_left + SIZE  , x_top  , 10, SIZE*5)
+			context.fillRect(x_left + SIZE +3 , x_top +3 +bar_offset  , 4, bar_length)
+			events.push([x_left + SIZE, x_top , 10, SIZE*5, function (x, y) { 
+				max = guesses[current_index].length
+				if (max <= 5)
+					return false
+				scroll_index = Math.floor((y - x_top)/(SIZE*5-6)*(max - 4))
+			}])
+		}
+		
+
     }
 	context.lineWidth = 1;
-	update_time()
     drawMenu()
 }
 
@@ -522,10 +482,10 @@ function drawAlphaBar(group, offset) {
     if (group<1 || group>5)
         return;
     var underliners = []
-    if (redLetters[word.index] != undefined && redLetters[word.index][offset] != undefined)
-    	underliners = redLetters[word.index][offset]
+    if (redLetters[current_index] != undefined && redLetters[current_index][offset] != undefined)
+    	underliners = redLetters[current_index][offset]
     var selected_data = ALPHA[group];
-	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE;
+	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE + 1;
 	var _top = PUZZLE_TOP+SIZE*(ROWS+0.5);
     for (var i=0; i<5; i++) {
     	//	drawing the decoders under the puzzle
@@ -577,7 +537,7 @@ function drawAlphaBar(group, offset) {
 
     for (var i=0; i<5; i++) {
     	//	drawing boxes to indicate the selected letter
-    	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE;
+    	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE +1;
     	var top = PUZZLE_TOP+SIZE*(i+ROWS+0.5);
         context.strokeStyle = "#000000";
         context.lineWidth = 1;
@@ -610,102 +570,4 @@ function drawAlphaBar(group, offset) {
     setShadow(true, 'black')
     context.strokeRect(left, _top, SIZE, SIZE*5);
     setShadow(false)
-}
-function drawAlphaBar_new(group, offset) {
-	w = 2
-    if (group<1 || group>5)
-        return;
-    var underliners = []
-    if (redLetters[word.index] != undefined && redLetters[word.index][offset] != undefined)
-    	underliners = redLetters[word.index][offset]
-    var selected_data = ALPHA[group];
-    for (var i=0; i<5; i++) {
-    	//	drawing the decoders under the puzzle
-    	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE;
-    	var top = PUZZLE_TOP+SIZE*(i+ROWS+0.5);
-        
-        if(word.hint[offset]) {
-        	context.fillStyle = '#ffffff';
-        } else {
-	        context.fillStyle = COLORS[group];
-        }
-        context.strokeStyle = "#000000"
-        context.lineWidth = 2
-
-        if ( i == 4 && group == 5) {	
-		    context.fillRect(left, top, SIZE-w, SIZE-w);
-
-        	context.fillStyle = "#000000"
-        	if (current_guess[offset] == selected_data[i]) {
-            	context.font = 'bold 14px sans-serif';
-				context.fillRect(left, top+SIZE-w, SIZE-w, w/2);
-        	} else {
-        		context.font = '12px sans-serif';
-        	}
-            context.fillText(selected_data[i], left + SIZE*.275, top + SIZE*.275);
-        	if (current_guess[offset] == selected_data[i+1]) {
-            	context.font = 'bold 14px sans-serif';
-		    	context.fillRect(left, top, w/2, SIZE-w);
-        	} else {
-        		context.font = '12px sans-serif';
-        	}
-            context.fillText(selected_data[i+1], left + SIZE*.65, top + SIZE*.6);
-
-	    	context.beginPath();
-	        context.strokeStyle = "#000000";
-	        context.lineWidth = 2
-	        if (underliners.indexOf(selected_data[i]) != -1) {
-			    context.moveTo(left+SIZE*.1,top+SIZE*.65);
-			    context.lineTo(left+SIZE*.45,top+SIZE*.65);
-			}
-
-	        if (underliners.indexOf(selected_data[i+1]) != -1) {
-			    context.moveTo(left+SIZE*.6,top+SIZE*.9);
-			    context.lineTo(left+SIZE*.9,top+SIZE*.95);
-			}
-		    context.closePath();
-		    context.stroke();
-
-		    //	drawing the diagonal line between Q and Z
-			context.beginPath();
-	        context.strokeStyle = "#000000";
-	        context.lineWidth = 2
-			context.moveTo(left+SIZE-w, top+1);
-			context.lineTo(left+1, top+SIZE-w);
-			context.stroke();
-
-		    context.strokeRect(left, top, SIZE-w, SIZE-w);
-        } else {
-        	if (current_guess[offset] == selected_data[i]) {
-        		//	selected
-	            context.font = 'bold 20px sans-serif';
-		        context.fillRect(left, top, SIZE-w, SIZE-w);
-		        context.fillStyle = COLORS[0]
-		    	context.fillRect(left + SIZE - w, top, w/4, SIZE-w);
-		        context.fillRect(left, top, SIZE-w, w/4);
-		        context.strokeRect(left, top, SIZE-w, SIZE-w);
-		        context.fillStyle = "#000000";
-            } else {
-            	//	not selected = normal
-            	context.font = '18px sans-serif';	
-		        context.fillRect(left, top, SIZE-w, SIZE-w);
-		        context.fillStyle = COLORS[0]
-		    	context.fillRect(left, top, w/2, SIZE-w);
-		        context.fillRect(left, top+SIZE-w, SIZE-w, w/2);
-		        context.strokeRect(left, top, SIZE-w, SIZE-w);
-		        context.fillStyle = "#333333";
-            }
-
-            context.fillText(selected_data[i], left + SIZE/2-w/2,top + SIZE/2-w/2);
-
-	        if (underliners.indexOf(selected_data[i]) != -1) {
-		    	context.beginPath();
-		        context.strokeStyle = "black";
-		        context.lineWidth = 3
-			    context.moveTo(left+SIZE*.15,top+SIZE*.85-w/2-1);
-			    context.lineTo(left+SIZE*.85-w,top+SIZE*.85-w/2-1);
-			    context.stroke();
-			}
-        }
-    }
 }

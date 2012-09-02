@@ -16,6 +16,7 @@ function newGuess(wordIndex) {
 function stopGame() {
 	if (redWords.length == 0 && timing) {
 		timing = false
+		//	unset the clockHandle
 		word = null
 		if ($('#submit_details').is(':checked')) {
 			var score = calculateScore()
@@ -55,6 +56,7 @@ function mouseDoubleClick(e){
 					_guess = guesses[i][j]
 					if (_guess[k] != hint) {
 						//	remove guess
+						removeGuess(i, j)
 						guesses[i].splice(j,1)
 					}
 				}
@@ -71,6 +73,7 @@ function mouseDoubleClick(e){
 						if (word === _word) {
 							current_guess = guesses[i][guesses[i].length -1]
 						}
+						addGuess(i)
 						guesses[i].push(newGuess(i))
 						current_guess = guesses[i][guesses[i].length -1]
 					}
@@ -86,6 +89,7 @@ function mouseDoubleClick(e){
 							repeatFlag = guesses[i].some(function (x) { return (x.join() == _guess.join() && x !== _guess) })
 							if(!repeatFlag) {
 								//	add to the list
+								addGuess(i)
 								var g = guesses[i].push(newGuess(i));
 								if (word === _word) {
 									current_guess = guesses[i][g-1];
@@ -118,8 +122,8 @@ function mouseClick(e){
 	for (var i = events.length - 1; i >= 0; i--) {
 		var ev = events[i]
 		if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3]) {
-			events = []
-			ev[4]()
+			ev[4](x, y)
+			continue
 		}
 	}
 
@@ -133,11 +137,11 @@ function mouseClick(e){
 	var y = Math.floor((e.pageY-$("#canvas").offset().top -PUZZLE_TOP) / SIZE);
 	if (0<=x && x< COLUMNS && 0<=y && y< ROWS) {
         //  selecting a new word-code in the puzzle
-        oldid = -1;
+        var oldid = -1;
         if (word) {
         	oldid = word.index;
         }
-        newid = detectWord(x, y, oldid);
+        var newid = detectWord(x, y, oldid);
         if (newid != -1 && newid != oldid) {	//	something new
 			word = wordList[newid];
 			word.index = newid;	//	fix for removing single words
@@ -145,6 +149,8 @@ function mouseClick(e){
 				guesses[newid] = [newGuess(newid)];
 			}
     		current_guess = guesses[newid][guesses[newid].length-1];
+    		current_index = newid
+    		scroll_index = 0
     	}
     } else {
     	//	check if the bars are clicked
@@ -162,10 +168,9 @@ if (word) {
 					g = GROUP[word.data[x].charCodeAt(0)-65];
 					if((g == 5) && (y==4)) {
 						// Q Z
-					    var tx = (e.pageX-$("#canvas").offset().left - PUZZLE_LEFT )/(SIZE+4.5) - x;
-						var ty = (e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - y - (ROWS+0.5);
-
-						if((tx+ty)>0.7) {
+					    var tx = (e.pageX-$("#canvas").offset().left - PUZZLE_LEFT-  (4-word.length)*0.5*SIZE )/(SIZE+4.5) +.25 - x 
+						var ty = (e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - (ROWS+0.5) - y
+						if((tx+ty)>0.85) {
 							char = ALPHA[g][y+1];
 						} else {
 							char = ALPHA[g][y];
@@ -181,11 +186,12 @@ if (word) {
 							found = checkList.indexOf(_word);
 							if ( found != -1) {
 								//	is it a new guess?
-								repeatFlag = guesses[word.index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })
+								repeatFlag = guesses[current_index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })
 								if(!repeatFlag) {
-									//	add to the list
-									current_guess = newGuess(newid);
-									var g = guesses[word.index].push(current_guess);
+									//	add to the guess list
+									addGuess(current_index)
+									current_guess = newGuess(current_index);
+									var g = guesses[current_index].push(current_guess);
 								}
 							}
 						}
@@ -196,13 +202,14 @@ if (word) {
 		
 		//	else check if the cross next to the guesses has been clicked
 		//	only if there is anything to guess
-		for (var i = 0; i < guesses[word.index].length-1; i++) {
+		for (var i = 0; i < guesses[current_index].length-1; i++) {
 			var left = x_left
         	var top = x_top + SIZE*i;
 			var x = e.pageX-$("#canvas").offset().left - left;
 			var y = e.pageY-$("#canvas").offset().top - top;
 			if( 0 <= x && x <= SIZE-10 && 0 <= y && y <= SIZE-10) {
-				guesses[word.index].splice(i,1)
+				removeGuess(current_index, i)
+				guesses[current_index].splice(i,1)
 			}
     	}
 	}
@@ -241,11 +248,12 @@ if (word) {
 							found = checkList.indexOf(_word);
 							if ( found != -1) {
 								//	is it a new guess?
-								repeatFlag = guesses[word.index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })
+								repeatFlag = guesses[current_index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })
 								if(!repeatFlag) {
 									//	add to the list
-									current_guess = newGuess(newid);
-									var g = guesses[word.index].push(current_guess);
+									current_guess = newGuess(current_index)
+									addGuess(current_index)
+   									var g = guesses[current_index].push(current_guess)
 								}
 							}
 						}
@@ -256,13 +264,14 @@ if (word) {
 		
 		//	else check if the cross next to the guesses has been clicked
 		//	only if there is anything to guess
-		for (var i = 0; i < guesses[word.index].length-1; i++) {
+		for (var i = 0; i < guesses[current_index].length-1; i++) {
 			var left = x_left
         	var top = x_top + SIZE*i;
 			var x = e.pageX-$("#canvas").offset().left - left;
 			var y = e.pageY-$("#canvas").offset().top - top;
 			if( 0 <= x && x <= SIZE-10 && 0 <= y && y <= SIZE-10) {
-				guesses[word.index].splice(i,1)
+				removeGuess(current_index, i)
+				guesses[current_index].splice(i,1)
 			}
     	}
 	}
