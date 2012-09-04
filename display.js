@@ -409,7 +409,7 @@ function drawPuzzle() {
 		
 		
 		max = guesses[current_index].length
-		while (scroll_index > max - 5) {
+		while (scroll_index > max - 5 && scroll_index > 0) {
 			scroll_index --
 		}
 		// draw the guesses with an X at the end so they can be deleted
