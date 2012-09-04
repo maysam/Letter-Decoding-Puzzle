@@ -414,9 +414,10 @@ function drawPuzzle() {
 		}
 		// draw the guesses with an X at the end so they can be deleted
 		_scroll_index = Math.floor(scroll_index)
-		for (var i = _scroll_index; i < 5+_scroll_index && i < guesses[current_index].length; i++) {
+		for (var old_i = _scroll_index; old_i < 5+_scroll_index && old_i < guesses[current_index].length; old_i++) {
+			var i = guesses[current_index].length - old_i - 1
 			// if last word is repeated is hint is full, not show it
-			var j = i - _scroll_index
+			var j = old_i - _scroll_index
 			if (i==guesses[current_index].length-1) {
 				var _guess = guesses[current_index][i];
 				if (word.hint.join() == word.data.join() && guesses[current_index].some(function (x) { return (x.join() == _guess.join() && x !== _guess) }))
@@ -428,6 +429,13 @@ function drawPuzzle() {
 //	        	var left = PUZZLE_LEFT + (SIZE+4)*(word.length + 0.7) + (word.length+1) * (SIZE-5) + (word.length+1) * (SIZE-5);
 
 	        	var top = PUZZLE_TOP+SIZE*(ROWS+.5 + j);
+				if ( k == word.length+1 ) {
+					//	refactor
+					if (!x_left) {
+						x_left = left+2
+						x_top = top+2
+					}	
+				}
 				if ( i < guesses[current_index].length-1 && k == word.length+1 ) {
 					if (word.hint.join() != word.data.join()) {
 						//	can remove only if all are not hinted
@@ -442,22 +450,20 @@ function drawPuzzle() {
 						context.closePath();
 						context.stroke();
 						context.strokeRect(left+2 ,top+2 , SIZE-10, SIZE-10);
-						if (!x_left) {
-							x_left = left+2
-							x_top = top+2
-						}
 					}
 				} else {
 					if ( guesses[current_index][i][k] != undefined ) {
+						//	draw guessed character
 						context.font = 'bold 20px sans-serif';
 						context.fillText(guesses[current_index][i][k], left + SIZE/2 - 2,top + SIZE/2 - 2 );
 					} else if (k <= word.length) {
+						//	draw placeholder box
 						context.lineWidth = 1;
 						context.strokeRect(left+2 ,top+2 , SIZE-10, SIZE-10);
 					}
-				}
-        	}
-    	}
+				}			
+        	}	//	k
+    	} // old i
 
 		if (max > 5) {
 			bar_length = (SIZE*5-6) * (5/max)
@@ -465,7 +471,6 @@ function drawPuzzle() {
 			context.strokeRect(x_left + SIZE  , x_top  , 10, SIZE*5)
 			context.fillRect(x_left + SIZE +3 , x_top +3 +bar_offset  , 4, bar_length)
 			events.push([x_left + SIZE - 10, x_top , SIZE, SIZE*5, function (x, y) { 
-				console.log(x,y)
 				max = guesses[current_index].length
 				if (max <= 5)
 					return false

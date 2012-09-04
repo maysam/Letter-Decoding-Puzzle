@@ -214,7 +214,6 @@ if (word) {
 									current_guess[0] = String.fromCharCode(65+Math.random()*26)
 									guesses[current_index].push(current_guess.join().split(','));
 */
-
 									current_guess = newGuess(current_index);
 									var g = guesses[current_index].push(current_guess);
 								}
@@ -228,14 +227,16 @@ if (word) {
 		//	else check if the cross next to the guesses has been clicked
 		//	only if there is anything to guess
 		_scroll_index = Math.floor(scroll_index)
-		for (var i = _scroll_index; i < guesses[current_index].length-1  && i < 5+_scroll_index; i++) {
+		for (var i = _scroll_index; i < guesses[current_index].length  && i < 5+_scroll_index; i++) 
+		if ( i > 0 ) {
+			var actual_i = guesses[current_index].length - i - 1
 			var left = x_left
         	var top = x_top + SIZE*(i - _scroll_index);
 			var x = e.pageX-$("#canvas").offset().left - left;
 			var y = e.pageY-$("#canvas").offset().top - top;
 			if( 0 <= x && x <= SIZE-10 && 0 <= y && y <= SIZE-10) {
-				removeGuess(current_index, i)
-				guesses[current_index].splice(i,1)
+				removeGuess(current_index, actual_i)
+				guesses[current_index].splice(actual_i,1)
 			}
     	}
 	}
