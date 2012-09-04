@@ -134,7 +134,7 @@ function newGame() {
 	time = 0
 	drawPuzzle()
 }
-
+var ge
 
 $(window).load(function () {
 	$("#rules_div").hide()
@@ -152,15 +152,20 @@ $(window).load(function () {
 	//	window.onclick = mouseClick
 	window.ondblclick = mouseDoubleClick;
 	function mouseMove(e) {
-
-        e=e.originalEvent
+		ge = e
+		if(e.originalEvent)
+        	e=e.originalEvent
         e = e || window.event;
         if (!e.which && e.button) {
             if      (e.button & 1) e.which = 1;
             else if (e.button & 4) e.which = 2;
             else if (e.button & 2) e.which = 3;
         }
-        if (e.which == 1) {
+        if (e.buttons != undefined)
+        	button = e.buttons
+        else
+        	button = e.which
+        if (button) {
         	//	scroll if scrollbar is there
 
 			var x = (e.touches) ? e.touches[0].pageX : e.pageX;
@@ -178,7 +183,7 @@ $(window).load(function () {
 				}
 			}
 
-        };
+        }
 	}
 	window.onmousemove = mouseMove
 	$("#rules_image")[0].onclick = function() {

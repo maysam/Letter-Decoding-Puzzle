@@ -409,8 +409,8 @@ function drawPuzzle() {
 		
 		
 		max = guesses[current_index].length
-		if (scroll_index > max - 5) {
-			scroll_index = 0
+		while (scroll_index > max - 5) {
+			scroll_index --
 		}
 		// draw the guesses with an X at the end so they can be deleted
 		_scroll_index = Math.floor(scroll_index)
@@ -464,11 +464,12 @@ function drawPuzzle() {
 			bar_offset = scroll_index*(SIZE*5-6-bar_length)/(max - 5)
 			context.strokeRect(x_left + SIZE  , x_top  , 10, SIZE*5)
 			context.fillRect(x_left + SIZE +3 , x_top +3 +bar_offset  , 4, bar_length)
-			events.push([x_left, x_top , 10+SIZE*2, SIZE*5, function (x, y) { 
+			events.push([x_left + SIZE - 10, x_top , SIZE, SIZE*5, function (x, y) { 
+				console.log(x,y)
 				max = guesses[current_index].length
 				if (max <= 5)
 					return false
-				_scroll_index = (y - x_top)/(SIZE*5-6)*(max - 4)
+				var _scroll_index = (y - x_top)/(SIZE*5-6)*(max - 4)
 				if (_scroll_index <= max - 5) {
 					scroll_index = _scroll_index
 				} else {
