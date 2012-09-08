@@ -80,33 +80,13 @@ function drawMenu() {
 	context.font = 'bold 16px sans-serif';
 	context.fillText( score, left + SIZE*0.9,top + SIZE*0.4);
 }
-function setShadow(status, color) {
-	if (status) {
-		if (color == undefined) {
-			color = 'white'
-		}
-	    context.shadowColor = color
-	    context.shadowOffsetX = 2
-	    context.shadowOffsetY = 2
-	    context.shadowBlur = 10
-	} else {
-		if (color == undefined) {
-			color = 'black'
-		}
-	    context.shadowColor = color
-	    context.shadowOffsetX = 0
-	    context.shadowOffsetY = 0
-	    context.shadowBlur = 0		
-	}
-}
+
 function drawPuzzle() {
 	events = []
 	context.canvas.width = context.canvas.width;	
 	context.textBaseline = 'middle';
     context.textAlign = "center";
     context.lineWidth = 1
-
-    setShadow(true)
 
 	context.fillStyle = COLORS[0];
 	context.fillRect(PUZZLE_LEFT-SIZE/4, PUZZLE_TOP-SIZE/4, SIZE*COLUMNS+SIZE/2, SIZE*ROWS+SIZE/2);
@@ -313,8 +293,6 @@ function drawPuzzle() {
 		}
 	}
 
-	setShadow(false)
-
 	for(var j=0; j<ROWS; j++) {
 		for(var i=0; i<COLUMNS; i++) {
 			var left = PUZZLE_LEFT+SIZE*i;
@@ -333,7 +311,6 @@ function drawPuzzle() {
 	context.font = 'bold 12px sans-serif'
 
 	context.drawImage($('#black-tile-logo')[0], empty_spot.x, empty_spot.y , 2*SIZE, SIZE)
-//	context.fillText('dcode-it',empty_spot.x, empty_spot.y)
 	
 	//	draw red rectangle around words needing attention
 

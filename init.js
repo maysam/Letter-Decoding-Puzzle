@@ -44,16 +44,15 @@ function getRandomWord(min_length, max_length) {
 	return dictionary[index]
 }
 
-var COLORS = ['#000000', '#ef3e44', '#fe8700', '#fdff00', '#26e122', '#585aed', '#ffffff'];
 var COLORS = ['black', 'red', 'orange', 'yellow', 'green', 'blue', 'white'];
 var ALPHA = new Array(
-                    new Array(),
-                    new Array('A', 'D', 'N', 'F', 'W'),
-                    new Array('E', 'C', 'P', 'K', 'J'),
-                    new Array('I', 'S', 'B', 'Y', 'X'),
-                    new Array('O', 'M', 'R', 'H', 'V'),
-                    new Array('U', 'T', 'L', 'G', 'Q', 'Z')
-                );
+    new Array(),
+    new Array('A', 'D', 'N', 'F', 'W'),
+    new Array('E', 'C', 'P', 'K', 'J'),
+    new Array('I', 'S', 'B', 'Y', 'X'),
+    new Array('O', 'M', 'R', 'H', 'V'),
+    new Array('U', 'T', 'L', 'G', 'Q', 'Z')
+);
 var GROUP = new Array(1,3,2,1,2,1,5,4,3,2,2,5,4,1,4,2,5,4,3,5,5,4,1,3,3,5);
 var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     //	ALPHA[GROUP['B'.charCodeAt(0)-65]]

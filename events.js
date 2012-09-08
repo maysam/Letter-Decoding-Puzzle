@@ -21,9 +21,7 @@ function stopGame() {
 		if ($('#submit_details').is(':checked')) {
 			var score = calculateScore()
 			var letters = countLetters()
-			//console.log('scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&maxsize=' + $('#maximum_word_size').val() + '&letters=' + letters )
 			$.get('http://www.dcode-it.com/test/scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&maxsize=' + $('#maximum_word_size').val() + '&letters=' + letters , function(data) { if(data) alert(data) } )
-			//$.get('scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&maxsize=' + $('#maximum_word_size').val() + '&letters=' + letters , function(data) { if(data) alert(data) } )
 			//	send data, store recoords
 		}
 	}
@@ -237,68 +235,6 @@ if (word) {
 			if( 0 <= x && x <= SIZE-10 && 0 <= y && y <= SIZE-10) {
 				removeGuess(current_index, actual_i)
 				guesses[current_index].splice(actual_i,1)
-			}
-    	}
-	}
-		if(false)	//	refactor later
-	if (word) {
-		var x = Math.floor((e.pageX-$("#canvas").offset().left - PUZZLE_LEFT -  (4-word.length)*0.5*SIZE )/(SIZE+4.5)+0.25)
-		var y = Math.floor((e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - ROWS-0.5)
-		var char = '';
-		if ( 0 <= x && x <= word.length) {
-			//	ignore if this column is hinted already
-			if (!word.hint[x]) {
-				if ( 0 <= y && y < 5 ) {
-					g = GROUP[word.data[x].charCodeAt(0)-65];
-					if((g == 5) && (y==4)) {
-						// Q Z
-					    // var tx = (e.pageX-$("#canvas").offset().left - PUZZLE_LEFT )/(SIZE+4.5) - x;
-						// var ty = (e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - y - (ROWS+0.5);
-						var tx = (e.pageX-$("#canvas").offset().left - PUZZLE_LEFT -  (4-word.length)*0.5*SIZE )/(SIZE+4.5)+0.25 - x
-						var ty = (e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - ROWS-0.5 - y
-
-						//console.log(1-3/SIZE,tx+ty, dtx+ dty)
-						//	0.9 = (SIZE-w+1)/SIZE
-						if((tx+ty)>0.96) {
-							char = ALPHA[g][y+1];
-						} else {
-							char = ALPHA[g][y];
-						}
-					} else {
-						char = ALPHA[g][y];
-					}
-					if (char != '') {
-						//	toggle char on choices index x
-						current_guess[x] = char;
-						_word = current_guess.join('');
-						if(_word.length > word.length) {
-							found = checkList.indexOf(_word);
-							if ( found != -1) {
-								//	is it a new guess?
-								repeatFlag = guesses[current_index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })
-								if(!repeatFlag) {
-									//	add to the list
-									current_guess = newGuess(current_index)
-									addGuess(current_index)
-   									var g = guesses[current_index].push(current_guess)
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		//	else check if the cross next to the guesses has been clicked
-		//	only if there is anything to guess
-		for (var i = 0; i < guesses[current_index].length-1; i++) {
-			var left = x_left
-        	var top = x_top + SIZE*i;
-			var x = e.pageX-$("#canvas").offset().left - left;
-			var y = e.pageY-$("#canvas").offset().top - top;
-			if( 0 <= x && x <= SIZE-10 && 0 <= y && y <= SIZE-10) {
-				removeGuess(current_index, i)
-				guesses[current_index].splice(i,1)
 			}
     	}
 	}

@@ -109,7 +109,7 @@ function newGame() {
 	resetGuessList()
 	do {
 		tries++
-		if (tries>100)
+		if (tries>1000)
 			break
 		//console.log('tries: ', tries)
 		init();
@@ -134,7 +134,6 @@ function newGame() {
 	time = 0
 	drawPuzzle()
 }
-var ge
 
 $(window).load(function () {
 	$("#setting_panel").hide()
@@ -144,11 +143,9 @@ $(window).load(function () {
 			$('#fullname').val(localStorage.fullname)
 	}
 
-	$(window).bind('touchstart click', mouseClick);
-	//	window.onclick = mouseClick
-	window.ondblclick = mouseDoubleClick;
+	$(window).bind('touchstart click', mouseClick)
+	window.ondblclick = mouseDoubleClick
 	function mouseMove(e) {
-		ge = e
 		if(e.originalEvent)
         	e=e.originalEvent
         e = e || window.event;
@@ -182,18 +179,6 @@ $(window).load(function () {
         }
 	}
 	window.onmousemove = mouseMove
-
-	$("#number_of_words")[0].onchange = function(){
-		if (this.value<9 || ~this.value == -1) {
-			alert('Minimum number of words is 9');
-			this.value = 9;
-		}
-		if (this.value>15) {
-			alert('Maximum number of words is 15');
-			this.value = 15;
-		}
-		return true;
-	}
 	$('#saveButton')[0].onclick = function () {
 		if ($('#submit_details').is(':checked')) {
 			if ($('#fullname').val() == '') {
