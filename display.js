@@ -44,7 +44,7 @@ function drawMenu() {
 
 	var left = PUZZLE_LEFT-.33*SIZE + left_offset;
 	var top = PUZZLE_TOP+SIZE*(ROWS+6);
-	context.drawImage($('#options')[0], left, top, SIZE*0.9, SIZE*0.9)
+	context.drawImage($('#settings-button')[0], left, top, SIZE*0.9, SIZE*0.9)
 	events.push([left, top, SIZE*0.9, SIZE*0.9, function () { $('#setting_panel').show() }])
 	
 	var left = PUZZLE_LEFT + SIZE*0.75 + left_offset;
@@ -59,44 +59,26 @@ function drawMenu() {
 		repeatFlag = false;
 	};
 
-	context.fillStyle    = "#ffaacc";
-	context.fillRect(left, top, SIZE*1.5, SIZE*0.8);
-	context.strokeStyle    = "#666666";
-	context.strokeRect(left, top, SIZE*1.5, SIZE*0.8);
-	context.fillStyle = COLORS[0];
-	context.font = 'bold 16px sans-serif';
-	context.fillText( 'NEW', left + SIZE*0.75 ,top + SIZE*0.45);
-	events.push([left, top, SIZE*1.5, SIZE*0.8, function () { newGame() }])
+	context.drawImage($('#new-button')[0], left, top, SIZE*1.6, SIZE*0.8)
+	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { newGame() }])
 
 	left += SIZE*1.65
-
-	if (false) {
-		context.fillStyle    = "#ffaacc";
-		context.fillRect(left, top, SIZE*2.1, SIZE*0.8);
-		context.strokeRect(left, top, SIZE*2.1, SIZE*0.8);
-		context.fillStyle = COLORS[0];
-		context.fillText( 'RULES', left + SIZE*1.05 ,top + SIZE*0.45);
-	}
 
 	left += SIZE*2.25
 	left = width - SIZE*6
 	if (timing && redWords && redWords.length == 0 && guess_count > 0) {
-		context.fillStyle    = "#ffaacc";
-		context.fillRect(left, top, SIZE*1.6, SIZE*0.8);
-		context.strokeRect(left, top, SIZE*1.6, SIZE*0.8);
-		context.fillStyle = COLORS[0];
-		context.fillText( 'STOP', left + SIZE*0.8 ,top + SIZE*0.45);
+		context.drawImage($('#stop-button')[0], left, top, SIZE*1.6, SIZE*0.8)
 		events.push([left, top, SIZE*1.6, SIZE*0.8, function () { stopGame() }])
 	}
 	left += SIZE*3.9
 	left = width - SIZE*2
 	context.fillStyle    = "#cccccc";
-	context.fillRect(left, top, SIZE*1.75, SIZE*0.8);
+	context.fillRect(left, top, SIZE*1.8, SIZE*0.8);
 	context.strokeStyle    = "#666666";
-	context.strokeRect(left, top, SIZE*1.75, SIZE*0.8);
+	context.strokeRect(left, top, SIZE*1.8, SIZE*0.8);
 	context.fillStyle = COLORS[0];
 	context.font = 'bold 16px sans-serif';
-	context.fillText( score, left + SIZE*0.75,top + SIZE*0.45);
+	context.fillText( score, left + SIZE*0.9,top + SIZE*0.4);
 }
 function setShadow(status, color) {
 	if (status) {
@@ -155,7 +137,7 @@ function drawPuzzle() {
 				//	empty spot
 				is_empty++
 				if (is_empty>=2) {
-					possible_empty_spots.push(new Point(left, textTop))
+					possible_empty_spots.push(new Point(left - SIZE, top))
 				}
 				continue
 			}
@@ -170,8 +152,8 @@ function drawPuzzle() {
 
 			if ( hints[i][j] != null ) {
 				//	if there is a hint, just go ahead with it
-				context.fillStyle = '#ffffff';
-				context.fillRect(left ,top ,SIZE,SIZE);
+				context.drawImage($('#white-tile')[0], left, top, SIZE, SIZE)
+
 				context.fillStyle = COLORS[0];
 				context.font = 'bold 20px sans-serif';
             	context.fillText(hints[i][j], textLeft, textTop);
@@ -212,27 +194,9 @@ function drawPuzzle() {
 				g = 0;
 				continue
 			}
-			w = 1.5
-			context.fillStyle = COLORS[g];
-			context.fillRect(left+w ,top ,SIZE-w,SIZE-w);
-            context.lineWidth = w
-            //context.strokeStyle = COLORS[0]
-            //context.strokeRect(left, top, SIZE, SIZE)
-            context.strokeStyle = '#999999'
-            context.strokeRect(left, top+w/2, w, SIZE-w/2)
-            context.strokeStyle = '#cccccc'
-            context.strokeRect(left+w/2, top+SIZE-w, SIZE-w/2, w)
-			context.strokeStyle = COLORS[g];
-			context.strokeRect(left+w ,top ,SIZE-w,SIZE-w);
 
-			if (i>0 && g>0 && puzzle[i-1][j] != null && puzzle[i-1][j] != -1 && g==GROUP[puzzle[i-1][j].charCodeAt(0)-65]) {
-				// draw a vertical line between similar color tiles                    
-                context.strokeRect(PUZZLE_LEFT+SIZE*i-.5,PUZZLE_TOP+SIZE*j,0,SIZE);
-			}
-			if (j>0 && g>0 && puzzle[i][j-1] != null && puzzle[i][j-1] != -1 && g==GROUP[puzzle[i][j-1].charCodeAt(0)-65]) {
-				// draw a horizontal line between similar color tiles
-                context.strokeRect(PUZZLE_LEFT+SIZE*i-.5,PUZZLE_TOP+SIZE*j,SIZE,0);
-			}
+			context.drawImage($('#'+COLORS[g]+'-tile')[0], left, top, SIZE, SIZE)
+
 
 			if (index1 != index2) {
 				//	determine if red box is needed around the words
@@ -352,17 +316,13 @@ function drawPuzzle() {
 	setShadow(false)
 
 	for(var j=0; j<ROWS; j++) {
-		var is_empty = 0
 		for(var i=0; i<COLUMNS; i++) {
 			var left = PUZZLE_LEFT+SIZE*i;
 			var top = PUZZLE_TOP+SIZE*j;
 			if(puzzle[i][j] != null && puzzle[i][j] != -1) {
 				continue
-			} 
-
-			w = 1.5
-			context.fillStyle = COLORS[0];
-			context.fillRect(left+w ,top ,SIZE,SIZE);
+			}
+			context.drawImage($('#black-tile')[0], left, top, SIZE, SIZE)
 		}
 	}
 	// draw site name on empty place
@@ -371,7 +331,9 @@ function drawPuzzle() {
 	empty_spot = possible_empty_spots[Math.floor(possible_empty_spots.length/2)]
 	context.fillStyle = COLORS[6]
 	context.font = 'bold 12px sans-serif'
-	context.fillText('dcode-it',empty_spot.x, empty_spot.y)
+
+	context.drawImage($('#black-tile-logo')[0], empty_spot.x, empty_spot.y , 2*SIZE, SIZE)
+//	context.fillText('dcode-it',empty_spot.x, empty_spot.y)
 	
 	//	draw red rectangle around words needing attention
 
@@ -497,18 +459,17 @@ function drawAlphaBar(group, offset) {
     	underliners = redLetters[current_index][offset]
     var selected_data = ALPHA[group];
 	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE + 1;
-	var _top = PUZZLE_TOP+SIZE*(ROWS+0.5);
+	var _top = PUZZLE_TOP+SIZE*(ROWS+0.5);    
+	
+	var _group = group
+	if(word.hint[offset]) {
+    	_group = 6
+    }
+	context.drawImage($('#'+COLORS[_group]+'-decoder')[0], left, _top, SIZE, SIZE*5)
+    
     for (var i=0; i<5; i++) {
     	//	drawing the decoders under the puzzle
     	var top = PUZZLE_TOP+SIZE*(i+ROWS+0.5);
-        
-        if(word.hint[offset]) {
-        	context.fillStyle = '#ffffff';
-        } else {
-	        context.fillStyle = COLORS[group];
-        }
-        context.fillRect(left, top, SIZE, SIZE);
-    
         context.fillStyle = "#000000";
         if ( i == 4 && group == 5) {
             context.font = 'bold 15px sans-serif';
@@ -578,7 +539,4 @@ function drawAlphaBar(group, offset) {
             }
     	}
     }
-    setShadow(true, 'black')
-    context.strokeRect(left, _top, SIZE, SIZE*5);
-    setShadow(false)
 }

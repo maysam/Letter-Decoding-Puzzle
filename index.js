@@ -104,7 +104,7 @@ function supports_html5_storage() {
 
 function newGame() {
 	MIN_LENGTH = 3
-	MAX_LENGTH = $("#maximum_word_size").val()
+	MAX_LENGTH = 5
 	tries = 0
 	resetGuessList()
 	do {
@@ -137,15 +137,11 @@ function newGame() {
 var ge
 
 $(window).load(function () {
-	$("#rules_div").hide()
 	$("#setting_panel").hide()
-	//$("#maximum_word_size").val(4)
 	$("#number_of_words").val(15)
 	if (supports_html5_storage()) {
 		if(localStorage.fullname)
 			$('#fullname').val(localStorage.fullname)
-		if (localStorage.email)
-			$('#email').val(localStorage.email)
 	}
 
 	$(window).bind('touchstart click', mouseClick);
@@ -186,9 +182,6 @@ $(window).load(function () {
         }
 	}
 	window.onmousemove = mouseMove
-	$("#rules_image")[0].onclick = function() {
-		$("#rules_div").hide();
-	}
 
 	$("#number_of_words")[0].onchange = function(){
 		if (this.value<9 || ~this.value == -1) {
@@ -201,29 +194,12 @@ $(window).load(function () {
 		}
 		return true;
 	}
-	$("#maximum_word_size")[0].onchange = function(){
-		if (this.value<4 || ~this.value == -1) {
-			alert('Minimum word size is 4');
-			this.value = 4;
-		}
-		if (this.value>9) {
-			alert('Maximum word size is 9');
-			this.value = 9;
-		}
-		return true;
-	}
 	$('#saveButton')[0].onclick = function () {
 		if ($('#submit_details').is(':checked')) {
 			if ($('#fullname').val() == '') {
 				alert('Please fill the name field')
 				return false
 			}
-			/*
-			if ($('#email').val() == '') {
-				alert('Please fill the email field')
-				return false
-			}
-			*/
 			if (supports_html5_storage()) {
 				localStorage.fullname = $('#fullname').val()
 				localStorage.email = $('#email').val()

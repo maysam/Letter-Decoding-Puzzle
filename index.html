@@ -3,7 +3,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">  
 	<link rel="stylesheet" href="style.css" type="text/css" />
 	<script type="text/javascript" src="jquery.min.js"></script>
-	<script type="text/javascript" src="Wordlist.js"></script>
+	<script type="text/javascript" src="wordlist.js"></script>
 	<script type="text/javascript" src="checklist.js"></script>
 	<script type="text/javascript" src="init.js"></script>
 	<script type="text/javascript" src="events.js"></script>
@@ -42,10 +42,30 @@
 	document.write('<canvas id="canvas" style="position:absolute; background-color:#dddddd; left: 50%; margin-left:-'+width*0.5+'px;  width:'+width+'px;" width="'+width+'px" height="'+height+'" ></canvas>')		
 	var context = $("#canvas")[0].getContext("2d");
 </script>
-<img src="logo.jpg" style="position:absolute; top:20; left: 50%; margin-left: -77px; display:none;">
-<div style="height:450px; position:absolute; margin-top:-225px; width:400px; margin-left:-200px;" id="rules_div" class="centerDiv">
-	<img src="rules.jpg" height="450" id="rules_image">
-</div>
+
+<img src="img/blue-tile.png" id="blue-tile">
+<img src="img/black-tile.png" id="black-tile">
+<img src="img/green-tile.png" id="green-tile">
+<img src="img/orange-tile.png" id="orange-tile">
+<img src="img/red-tile.png" id="red-tile">
+<img src="img/yellow-tile.png" id="yellow-tile">
+<img src="img/white-tile.png" id="white-tile">
+
+
+<img src="img/blue-decoder.png" id="blue-decoder">
+<img src="img/green-decoder.png" id="green-decoder">
+<img src="img/orange-decoder.png" id="orange-decoder">
+<img src="img/red-decoder.png" id="red-decoder">
+<img src="img/yellow-decoder.png" id="yellow-decoder">
+<img src="img/white-decoder.png" id="white-decoder">
+
+<img src="img/black-tile-logo.png" id="black-tile-logo">
+<img src="img/settings-button.png" id="settings-button">
+<img src="img/new-button.png" id="new-button">
+<img src="img/stop-button.png" id="stop-button">
+
+<img id="backButton" src="img/back.png">
+
 <div style="display:none; width:300px; border: 10px solid; position:absolute; background-color:white; height:290px; margin-left: -160px; margin-top: -160px;" id="setting_panel" class="centerDiv">
 <div style="text-align:center">
 <h2>Game Settings</h2>
@@ -62,13 +82,6 @@
 		<option>15</option>
 	</select>
 </div>
-<div style="text-align:left; margin:10px; display:none;">
-	Maximum word size
-	<input id="maximum_word_size" style="left: 200px; position:absolute;" size=2 value=5 /> <div style="float:right">4 - 9</div>
-<div style="left:50px; position:absolute; top:120px; font-size:12px;">
-	(in letters)
-</div>
-</div>
 <div style="text-align:center">
 <h3>Score Submission</h3>
 </div>
@@ -81,15 +94,9 @@ Submit Details
 	Full name
 	<input id="fullname" style="left: 100px; position:absolute;" size=25 value="firstname lastname" />
 </div>
-<div style="text-align:left; margin:10px; display:none">
-	Email
-	<input id="email" style="left: 100px; position:absolute;" size=25 value="email@domain.com" />
-</div>
 <div style="text-align:center; margin-top: 20px;">
 <input type=button value="Save" id="saveButton" style="width:150px" />
 </div>
 </div>
-<img id="backButton" src="back.png">
-<img id="options" src="options.png">
 </body>
 </html>

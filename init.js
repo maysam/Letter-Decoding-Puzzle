@@ -45,6 +45,7 @@ function getRandomWord(min_length, max_length) {
 }
 
 var COLORS = ['#000000', '#ef3e44', '#fe8700', '#fdff00', '#26e122', '#585aed', '#ffffff'];
+var COLORS = ['black', 'red', 'orange', 'yellow', 'green', 'blue', 'white'];
 var ALPHA = new Array(
                     new Array(),
                     new Array('A', 'D', 'N', 'F', 'W'),

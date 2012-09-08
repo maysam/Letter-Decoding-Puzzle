@@ -32,7 +32,7 @@ function stopGame() {
 function mouseDoubleClick(e){
 	if(e.originalEvent)
 		e=e.originalEvent
-	if ( !puzzle || $('#setting_panel').css('display') == 'block' || $('#rules_div').css('display') == 'block' ) {
+	if ( !puzzle || $('#setting_panel').css('display') == 'block' ) {
 		return true;
 	}
 
@@ -109,7 +109,7 @@ function mouseDoubleClick(e){
 
 function mouseClick(e){
 	e=e.originalEvent
-	if ( $('#setting_panel').css('display') == 'block' || $('#rules_div').css('display') == 'block' ) {
+	if ( $('#setting_panel').css('display') == 'block' ) {
 		return true
 	}
 
