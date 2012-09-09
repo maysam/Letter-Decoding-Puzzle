@@ -3,7 +3,7 @@ function calculateScore() {
 	if (!wordList)
 		return 0;
 	for (var i = 0; i < wordList.length; i++) {
-		points += (guesses[i][0].length)*(guesses[i].length-1)	//	no more penalty for hints -wordList[i].hint.join('').length
+		points += (guesses[i][0].length - wordList[i].hint.join('').length)*(guesses[i].length-1)
 	}
 	return points;
 }
