@@ -106,10 +106,11 @@ function newGame() {
 	MIN_LENGTH = 3
 	MAX_LENGTH = 5
 	tries = 0
+	$('#loading_panel').show()
 	resetGuessList()
 	do {
 		tries++
-		if (tries>1000)
+		if (tries>10000)
 			break
 		//console.log('tries: ', tries)
 		init();
@@ -132,7 +133,8 @@ function newGame() {
 	} while (notConnected || wordCount != $("#number_of_words").val());
 	timing = true
 	time = 0
-	drawPuzzle()
+	
+	setTimeout(function(){ $('#loading_panel').hide() }, 500)
 }
 
 $(window).load(function () {
@@ -193,4 +195,5 @@ $(window).load(function () {
 		$('#setting_panel').hide();
 	}
 	newGame()
+	drawPuzzle()
 })
