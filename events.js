@@ -21,7 +21,7 @@ function stopGame() {
 		if ($('#submit_details').is(':checked')) {
 			var score = calculateScore()
 			var letters = countLetters()
-			$.get('http://www.dcode-it.com/test/scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&maxsize=' + $('#maximum_word_size').val() + '&letters=' + letters , function(data) { if(data) alert(data) } )
+			$.get('scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&maxsize=' + $('#maximum_word_size').val() + '&letters=' + letters , function(data) { if(data) alert(data) } )
 			//	send data, store recoords
 		}
 	}

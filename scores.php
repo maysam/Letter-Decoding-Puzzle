@@ -1,5 +1,5 @@
 <?php
-//error_reporting(-1);
+error_reporting(-1);
 //	54.251.62.84
 //	QJ6T!yybCq
 
@@ -22,8 +22,7 @@ if ($_REQUEST['fullname'] || $_REQUEST['email'] || $_REQUEST['wordcount'] || $_R
     $html_display = true;
 }
 
-if ($_REQUEST['fullname'] && $_REQUEST['email'] && $_REQUEST['wordcount'] && $_REQUEST['maxsize'] && 
-    $_REQUEST['letters'] && $_REQUEST['time'] && $_REQUEST['score']) {
+if ($_REQUEST['fullname'] && $_REQUEST['wordcount'] && $_REQUEST['letters'] && $_REQUEST['time'] && $_REQUEST['score']) {
 
     $_REQUEST['date'] = time();
     $md5 = $_REQUEST['id'] = md5($_REQUEST['fullname'].$_REQUEST['email'].$_REQUEST['wordcount'].$_REQUEST['maxsize'].$_REQUEST['letters'].$_REQUEST['time'].$_REQUEST['score'].$_REQUEST['date']);
@@ -43,7 +42,7 @@ foreach ($list as $key => $item) {
 if($data)
     krsort($data);
 
-const MAX_COUNT = 20;
+const MAX_COUNT = 1000;
 
 if ($new_record) {
     if (count($data[$wordcount]) > MAX_COUNT) {

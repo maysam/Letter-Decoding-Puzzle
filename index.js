@@ -89,10 +89,11 @@ function makeTree() {
 		//	if tree has yes then take it as a word
 	}
 }
-var dictionary = easyList;
-
-var tree = [0,null];
-makeTree();
+var high_score = ''
+var top_score = ''
+var dictionary = easyList
+var tree = [0,null]
+makeTree()
 
 function supports_html5_storage() {
   try {
@@ -133,7 +134,7 @@ function newGame() {
 	} while (notConnected || wordCount != $("#number_of_words").val());
 	timing = true
 	time = 0
-	
+	$.getJSON('topscores.php?wordcount='+wordCount+'&fullname='+$('#fullname').val(), function s(data){high_score = data.HS; top_score=data.TS; drawPuzzle()})
 	setTimeout(function(){ $('#loading_panel').hide() }, 500)
 }
 
@@ -195,5 +196,4 @@ $(window).load(function () {
 		$('#setting_panel').hide();
 	}
 	newGame()
-	drawPuzzle()
 })

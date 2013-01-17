@@ -66,6 +66,11 @@ function drawMenu() {
 		context.drawImage($('#stop-button')[0], left, top, SIZE*1.6, SIZE*0.8)
 		events.push([left, top, SIZE*1.6, SIZE*0.8, function () { stopGame() }])
 	}
+	left = width - SIZE*5
+	context.fillStyle = COLORS[0];
+	context.strokeStyle    = "#666666";
+	context.font = 'bold 16px sans-serif';
+	context.fillText( 'HS:'+ high_score +' TS:'+top_score, left + SIZE*0.9,top + SIZE*0.4);
 	left = width - SIZE*2
 	context.fillStyle    = "#cccccc";
 	context.fillRect(left, top, SIZE*1.8, SIZE*0.8);
