@@ -188,30 +188,6 @@ if (word) {
 								if(!repeatFlag) {
 									//	add to the guess list
 									addGuess(current_index)
-/*
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-									current_guess[0] = String.fromCharCode(65+Math.random()*26)
-									guesses[current_index].push(current_guess.join().split(','));
-*/
 									current_guess = newGuess(current_index);
 									var g = guesses[current_index].push(current_guess);
 								}

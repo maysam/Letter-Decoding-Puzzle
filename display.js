@@ -60,7 +60,11 @@ function drawMenu() {
 	};
 
 	context.drawImage($('#new-button')[0], left, top, SIZE*1.6, SIZE*0.8)
-	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { newGame() }])
+	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { if(!$('#loading_panel').is(':visible')) { 
+		$('#loading_panel').show()
+		setTimeout(function(){ newGame() }, 1)
+		 
+		} }])
 
 	if (timing && redWords && redWords.length == 0 && guess_count > 0) {
 		context.drawImage($('#stop-button')[0], left, top, SIZE*1.6, SIZE*0.8)

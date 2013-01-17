@@ -107,7 +107,6 @@ function newGame() {
 	MIN_LENGTH = 3
 	MAX_LENGTH = 5
 	tries = 0
-	$('#loading_panel').show()
 	resetGuessList()
 	do {
 		tries++
@@ -134,8 +133,18 @@ function newGame() {
 	} while (notConnected || wordCount != $("#number_of_words").val());
 	timing = true
 	time = 0
-	$.getJSON('topscores.php?wordcount='+wordCount+'&fullname='+$('#fullname').val(), function s(data){high_score = data.HS; top_score=data.TS; drawPuzzle()})
-	setTimeout(function(){ $('#loading_panel').hide() }, 500)
+	$.ajax({
+	  url: 'topscores.php',
+	  dataType: 'json',
+	  async: true,
+	  data: {"wordcount": wordCount, "fullname": $('#fullname').val()},
+	  success: function(data) {
+	    high_score = data.HS
+	    top_score=data.TS
+	    drawPuzzle()
+	    $('#loading_panel').hide()
+	  }
+	})
 }
 
 $(window).load(function () {
