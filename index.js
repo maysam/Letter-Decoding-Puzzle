@@ -13,29 +13,6 @@ if (!('indexOf' in Array.prototype)) {
 	}
 }
 
-(function($) {
-     $.fn.doubleTap = function(doubleTapCallback) {
-         return this.each(function(){
-			var elm = this
-			var lastTap = 0
-			$(elm).bind('vmousedown', function (e) {
-				var now = (new Date()).valueOf()
-				var diff = (now - lastTap)
-				lastTap = now ;
-				if (diff < 250) {
-					if($.isFunction( doubleTapCallback )) {
-		                       doubleTapCallback.call(elm)
-		            }
-				}
-			})
-        })
-    }
-})(jQuery);
-//  put class="doubleTap" on the elements you need to double tap
-$("#canvas").doubleTap(function(e){
-			// 'this' is the element that was double tap
-			mouseDoubleClick(e)
-  })
 document.addEventListener('touchmove', function(event) {
   event.preventDefault();
 }, false); 
@@ -44,7 +21,7 @@ $(window).bind('touchstart', function(e){
        var now = new Date().getTime();
        var lastTouch = $(this).data('lastTouch') || now + 1 /** the first time this will make delta a negative number */;
        var delta = now - lastTouch;
-       if(delta<500 && delta>0){
+       if(delta<200 && delta>0){
                // the second touchend event happened within half a second. Here is where we invoke the double tap code
                mouseDoubleClick(e)
        } else {
@@ -155,7 +132,6 @@ $(window).load(function () {
 			$('#fullname').val(localStorage.fullname)
 	}
 
-	$(window).bind('touchstart click', mouseClick)
 	window.ondblclick = mouseDoubleClick
 	function mouseMove(e) {
 		if(e.originalEvent)
