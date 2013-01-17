@@ -121,7 +121,7 @@ function mouseClick(e){
 		var ev = events[i]
 		if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3]) {
 			ev[4](x, y)
-			continue
+			break
 		}
 	}
 

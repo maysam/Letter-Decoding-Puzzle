@@ -62,15 +62,10 @@ function drawMenu() {
 	context.drawImage($('#new-button')[0], left, top, SIZE*1.6, SIZE*0.8)
 	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { newGame() }])
 
-	left += SIZE*1.65
-
-	left += SIZE*2.25
-	left = width - SIZE*6
 	if (timing && redWords && redWords.length == 0 && guess_count > 0) {
 		context.drawImage($('#stop-button')[0], left, top, SIZE*1.6, SIZE*0.8)
 		events.push([left, top, SIZE*1.6, SIZE*0.8, function () { stopGame() }])
 	}
-	left += SIZE*3.9
 	left = width - SIZE*2
 	context.fillStyle    = "#cccccc";
 	context.fillRect(left, top, SIZE*1.8, SIZE*0.8);
