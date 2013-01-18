@@ -166,6 +166,7 @@ $(window).load(function () {
 
         }
 	}
+	$(window).bind('click', mouseClick)
 	window.onmousemove = mouseMove
 	$('#saveButton')[0].onclick = function () {
 		if ($('#submit_details').is(':checked')) {
