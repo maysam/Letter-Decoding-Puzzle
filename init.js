@@ -141,7 +141,7 @@ function init() {
     word = null;		//	selected word
 
 	for(var i=0; i<COLUMNS; i+=2+Math.floor(Math.random()*1.1)) {
-		if (wordCount*2+2 > $("#number_of_words").val()) {
+		if (wordCount*2+2 > $("#number_of_words:checked").val()) {
 			continue;
 		}
 		obj = new Word();
@@ -233,7 +233,7 @@ function fillHorizontals() {
 	return count;
 }
 function processTube(i, j, tube) {
-	if (wordCount == $("#number_of_words").val()) {
+	if (wordCount == $("#number_of_words:checked").val()) {
 		return 0;
 	}
 
@@ -350,7 +350,7 @@ function processTube(i, j, tube) {
 				}
 			}
 			for (var c = 0; c < choices.length; c+=2) {
-				if (wordCount == $("#number_of_words").val()) {
+				if (wordCount == $("#number_of_words:checked").val()) {
 					return c/2
 				}
 				maxi = choices[c]

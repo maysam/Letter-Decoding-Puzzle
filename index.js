@@ -107,7 +107,7 @@ function newGame() {
 				}
 			}
 		}
-	} while (notConnected || wordCount != $("#number_of_words").val());
+	} while (notConnected || wordCount != $("#number_of_words:checked").val());
 	timing = true
 	time = 0
 	$.ajax({
