@@ -126,7 +126,7 @@ function newGame() {
 
 $(window).load(function () {
 	$("#setting_panel").hide()
-	$("#number_of_words").val(15)
+	$("#number_of_words[value=15]").attr('checked', true);
 	if (supports_html5_storage()) {
 		if(localStorage.fullname)
 			$('#fullname').val(localStorage.fullname)
