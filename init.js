@@ -140,10 +140,7 @@ function init() {
     wordCount = 0;		//	number of words
     word = null;		//	selected word
 
-	for(var i=0; i<COLUMNS; i+=2+Math.floor(Math.random()*1.1)) {
-		if (wordCount*2+2 > $("#number_of_words:checked").val()) {
-			continue;
-		}
+	for(var i=0; i<COLUMNS && wordCount*2+2 <= $("#number_of_words:checked").val(); i+=2+Math.floor(Math.random()*1.1)) {
 		obj = new Word();
 		//	choose a word
 		_word = getRandomWord(MIN_LENGTH, MAX_LENGTH);
