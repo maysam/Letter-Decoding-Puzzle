@@ -10,7 +10,7 @@ function getWord(node) {
 	var parent = node[1];
 	if (parent == null)
 		return '';
-	var last = parent.indexOf(node);
+	var last = _.indexOf(parent, node);
 	var letter = parent[last-1];
 	return getWord(parent) + letter;
 }
@@ -38,10 +38,11 @@ function isFull(arr) {
 
 function getRandomWord(min_length, max_length) {
 	//	gets random word directly from the dictionary
+	var dindex = 1;
 	do {
-		index = Math.floor(Math.random()*dictionary.length)
-	} while(dictionary[index].length > max_length || dictionary[index].length < min_length)
-	return dictionary[index]
+		dindex = Math.floor(Math.random()*dictionary.length)
+	} while(dictionary[dindex].length > max_length || dictionary[dindex].length < min_length)
+	return dictionary[dindex]
 }
 
 var COLORS = ['black', 'red', 'orange', 'yellow', 'green', 'blue', 'white'];
@@ -83,7 +84,7 @@ function addGuess(word_index) {
 function getGuessIndex(word_index, guess_index) {
 	var guess = guesses[word_index][guess_index].join('')
 	var key = word_index+' '+guess
-	return guessList.indexOf(key)
+	return _.indexOf(guessList, key)
 }
 function removeGuess(word_index, guess_index) {
 	var index = getGuessIndex(word_index, guess_index)
@@ -135,15 +136,15 @@ function init() {
 		}
 	}
 
-    wordList = [];	//	information about the words in the puzzle 
-    						//	{ startx:0, starty:0, xp:0, yp:0, endx:0, endy:0, length:0, data:Array(), choices:Array() };
-    wordCount = 0;		//	number of words
-    word = null;		//	selected word
+  wordList = [];	//	information about the words in the puzzle 
+  						//	{ startx:0, starty:0, xp:0, yp:0, endx:0, endy:0, length:0, data:Array(), choices:Array() };
+  wordCount = 0;		//	number of words
+  word = null;		//	selected word
 
 	for(var i=0; i<COLUMNS && wordCount*2+2 <= $("#number_of_words:checked").val(); i+=2+Math.floor(Math.random()*1.1)) {
 		obj = new Word();
 		//	choose a word
-		_word = getRandomWord(MIN_LENGTH, MAX_LENGTH);
+		var _word = getRandomWord(MIN_LENGTH, MAX_LENGTH);
 
 		//	then put it in the row randomly
 		j = Math.floor(Math.random()*(ROWS-_word.length+1));
@@ -227,6 +228,7 @@ function fillHorizontals() {
 			count += processTube(last_start, j,tube)
 		}
 	}
+
 	return count;
 }
 function processTube(i, j, tube) {
@@ -250,7 +252,7 @@ function processTube(i, j, tube) {
 			for (var n = 0; n < example.length; n++) {
 				var next = example[n];
 				if(!next) continue;
-				if (next.indexOf('YES') != -1  && tube[k]==null) {
+				if (_.indexOf(next, 'YES') != -1  && tube[k]==null) {
 					if (lastCrossing != -1 ) {	//	and far enough
 						//console.log(next)
 						output.push(i,next);
@@ -264,7 +266,7 @@ function processTube(i, j, tube) {
 					}
 				} else {
 					lastCrossing = k;
-					index = next.indexOf(tube[k]);
+					var index = _.indexOf(next, tube[k]);
 					if (index != -1) {
 						temp_example.push(next[index+1]);
 					}
@@ -274,7 +276,7 @@ function processTube(i, j, tube) {
 		};
 		for (var n = 0; n < example.length; n++) {
 			if(!example[n]) continue;
-			if (example[n].indexOf('YES') != -1) {
+			if (_.indexOf(example[n], 'YES') != -1) {
 				if (lastCrossing != -1 && tube.length==example[n][0]) {	//	and far enough
 					output.push(i, example[n]);
 				}
@@ -284,7 +286,7 @@ function processTube(i, j, tube) {
 		while(tube.shift() != null)
 			i++;
 	}
-//	console.log(output)
+
 	if(output.length>0) {
 		var max = '';
 		var maxi = -1;
@@ -307,7 +309,7 @@ function processTube(i, j, tube) {
 				maxi = -1
 				for (var k = 1; k < output.length; k+=2) {
 					var _word = getWord(output[k])
-					if (wordList.indexOf(_word) != -1 || choices.indexOf(_word) != -1) {
+					if (_.indexOf(wordList, _word) != -1 || _.indexOf(choices, _word) != -1) {
 						//	try another word
 						continue;
 					};
@@ -329,7 +331,7 @@ function processTube(i, j, tube) {
 				maxi = -1
 				for (var k = 1; k < output.length; k+=2) {
 					var _word = getWord(output[k])
-					if (wordList.indexOf(_word) != -1 || choices.indexOf(_word) != -1) {
+					if (_.indexOf(wordList, _word) != -1 || _.indexOf(choices, _word) != -1) {
 						//	try another word
 						continue
 					}

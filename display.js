@@ -152,7 +152,7 @@ function drawPuzzle() {
 							list1.push(guesses[index1][m][k1])
 						}
 					}
-					if (list1.indexOf(hints[i][j]) == -1 && word1.data.join() !=  word1.hint.join()) {
+					if (_.indexOf(list1, hints[i][j]) == -1 && word1.data.join() !=  word1.hint.join()) {
 						redWords[index1]=index1
 					}
 					if (index2 != index1) {
@@ -164,7 +164,7 @@ function drawPuzzle() {
 								list2.push(guesses[index2][m][k2])
 							}
 						}
-						if (list2.indexOf(hints[i][j]) == -1  && word2.data.join() !=  word2.hint.join()) {
+						if (_.indexOf(list2, hints[i][j]) == -1  && word2.data.join() !=  word2.hint.join()) {
 							redWords[index2]=index2
 						}
 					}
@@ -201,12 +201,12 @@ function drawPuzzle() {
 					}
 				}
 				for (var m = 0; m < list1.length; m++) {
-					if ( list2.indexOf(list1[m]) == -1 ) {
+					if ( _.indexOf(list2, list1[m]) == -1 ) {
 						redWords[index2]=index2
 					}
 				}
 				//	also red word if the hint is not in the guesses
-				if (hints[i][j] != null && list2.indexOf(hints[i][j]) == -1 ) {
+				if (hints[i][j] != null && _.indexOf(list2, hints[i][j]) == -1 ) {
 					redWords[index2]=index2
 				}
 			
@@ -216,12 +216,12 @@ function drawPuzzle() {
 				redLetters[index2][k2] = list1
 
 				for (var m = 0; m < list2.length; m++) {
-					if ( list1.indexOf(list2[m]) == -1 ) {
+					if ( _.indexOf(list1, list2[m]) == -1 ) {
 						redWords[index1] = index1
 					}
 				}
 				//	also red word if the hint is not in the guesses
-				if (hints[i][j] != null && list1.indexOf(hints[i][j]) == -1 ) {
+				if (hints[i][j] != null && _.indexOf(list1, hints[i][j]) == -1 ) {
 					redWords[index1]=index1
 				}
 				if (redLetters[index1] == undefined) {
@@ -461,12 +461,12 @@ function drawAlphaBar(group, offset) {
 	    	context.beginPath();
 	        context.strokeStyle = "#000000";
 	        context.lineWidth = 2
-	        if (underliners.indexOf(selected_data[i]) != -1) {
+	        if (_.indexOf(underliners,selected_data[i]) != -1) {
 			    context.moveTo(left+SIZE*.1,top+SIZE*.65);
 			    context.lineTo(left+SIZE*.45,top+SIZE*.65);
 			}
 
-	        if (underliners.indexOf(selected_data[i+1]) != -1) {
+	        if (_.indexOf(underliners,selected_data[i+1]) != -1) {
 			    context.moveTo(left+SIZE*.6,top+SIZE*.9);
 			    context.lineTo(left+SIZE*.9,top+SIZE*.95);
 			}
@@ -476,7 +476,7 @@ function drawAlphaBar(group, offset) {
             context.font = 'bold 20px sans-serif';
             context.fillText(selected_data[i], left + SIZE/2,top + SIZE/2);
 
-	        if (underliners.indexOf(selected_data[i]) != -1) {
+	        if (_.indexOf(underliners,selected_data[i]) != -1) {
 		    	context.beginPath();
 		        context.strokeStyle = "#000000";
 		        context.lineWidth = 3

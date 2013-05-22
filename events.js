@@ -28,6 +28,7 @@ function stopGame() {
 }
 
 function mouseDoubleClick(e){
+	console.log('mouseDoubleClick')
 	if(e.originalEvent)
 		e=e.originalEvent
 	if ( !puzzle || $('#setting_panel').css('display') == 'block' ) {
@@ -81,7 +82,7 @@ function mouseDoubleClick(e){
 					//	check the guess
 
 					if(_guess.join('').length > word.length) {
-						found = checkList.indexOf(_guess.join(''));
+						found = _.indexOf(checkList, _guess.join(''));
 						if ( found != -1) {
 							//	is it a new guess?
 							repeatFlag = guesses[i].some(function (x) { return (x.join() == _guess.join() && x !== _guess) })
@@ -181,7 +182,7 @@ if (word) {
 						current_guess[x] = char;
 						_word = current_guess.join('');
 						if(_word.length > word.length) {
-							found = checkList.indexOf(_word);
+							found = _.indexOf(checkList,_word);
 							if ( found != -1) {
 								//	is it a new guess?
 								repeatFlag = guesses[current_index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })

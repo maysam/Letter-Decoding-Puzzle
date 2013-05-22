@@ -59,7 +59,7 @@ function makeTree() {
 			ITS
 			SOL 
 		*/
-		if(temp.indexOf('YES') == -1) {
+		if(_.indexOf(temp, 'YES') == -1) {
 			//	make sure it's not a duplicated word
 			temp.push('YES');
 		}

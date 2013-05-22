@@ -3,46 +3,45 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">  
 	<link rel="stylesheet" href="style.css" type="text/css" />
 	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="underscore.min.js"></script>
+	<script type="text/javascript" src="coffee-script.js"></script>
 	<script type="text/javascript" src="wordlist.js"></script>
 	<script type="text/javascript" src="checklist.js"></script>
 	<script type="text/javascript" src="init.js"></script>
 	<script type="text/javascript" src="events.js"></script>
 	<script type="text/javascript" src="display.js"></script>
-	<script type="text/javascript" src="index.js"></script>
+  <script type="text/coffeescript" src="index.js.coffee"></script>	
+
 </head>
 <body>
-<script type="text/javascript">
-	var isiOS = false
-	var agent = navigator.userAgent.toLowerCase()
-	if(agent.indexOf('iphone') >= 0 || agent.indexOf('ipad') >= 0){
-	       isiOS = true
-	}
-
-	if (isiOS) {
-		var SIZE = 29
-		var COLUMNS = 10
-		var ROWS = 9
-		var MAX_LENGTH = Math.ceil(COLUMNS/2);
-		var PUZZLE_LEFT = 15
-		var PUZZLE_TOP = 15
-		var width = 320
-		var height = 480
-	} else {
-		//	0nduj
-		//	m433cp
-		var SIZE = 30
-		var COLUMNS = 11
-		var ROWS = 9
-		var MAX_LENGTH = Math.ceil(COLUMNS/2);
-		var PUZZLE_LEFT = SIZE/2
-		var PUZZLE_TOP = SIZE/2
-		var width = (COLUMNS+1)*SIZE
-		var height = (7.5+ROWS)*SIZE
-	}
-	document.write('<canvas id="canvas" style="position:absolute; background-color:#dddddd; left: 50%; margin-left:-'+width*0.5+'px;  width:'+width+'px;" width="'+width+'px" height="'+height+'" ></canvas>')		
-	var context = $("#canvas")[0].getContext("2d");
+<script type="text/coffeescript">
+	window.agent = navigator.userAgent.toLowerCase()
+	window.isiOS = agent.indexOf("iphone") >= 0 or agent.indexOf("ipad") >= 0
+	if isiOS
+	  window.SIZE = 29
+	  window.COLUMNS = 10
+	  window.ROWS = 9
+	  window.MAX_LENGTH = Math.ceil(COLUMNS / 2)
+	  window.PUZZLE_LEFT = 15
+	  window.PUZZLE_TOP = 15
+	  window.width = 320
+	  window.height = 480
+	else
+	  window.SIZE = 30
+	  window.COLUMNS = 11
+	  window.ROWS = 9
+	  window.MAX_LENGTH = Math.ceil(COLUMNS / 2)
+	  window.PUZZLE_LEFT = SIZE / 2
+	  window.PUZZLE_TOP = SIZE / 2
+	  window.width = (COLUMNS + 1) * SIZE
+	  window.height = (7.5 + ROWS) * SIZE
+	canvas = $("#canvas")
+	canvas.css 'margin-left', -0.5*width 
+	canvas.css 'width', width 
+	canvas.css 'height', height 
+	window.context = canvas[0].getContext "2d"
 </script>
-
+<canvas id="canvas" style="position:absolute; background-color:#dddddd; left: 50%; margin-left:-180px;  width:360px;" width="360px" height="495"></canvas>
 <img src="img/blue-tile.png" id="blue-tile">
 <img src="img/black-tile.png" id="black-tile">
 <img src="img/green-tile.png" id="green-tile">
@@ -87,12 +86,12 @@
 <div style="text-align:left; margin:10px;">
 	Number of Words <br />
 	<input id="number_of_words" name="number_of_words" type="radio" value="9">9</input>
-	<input id="number_of_words" name="number_of_words" type="radio" value="10">10</input>
+	<input id="number_of_words" name="number_of_words" type="radio" value="10" checked="checked">10</input>
 	<input id="number_of_words" name="number_of_words" type="radio" value="11">11</input>
 	<input id="number_of_words" name="number_of_words" type="radio" value="12">12</input>
 	<input id="number_of_words" name="number_of_words" type="radio" value="13">13</input>
 	<input id="number_of_words" name="number_of_words" type="radio" value="14">14</input>
-	<input id="number_of_words" name="number_of_words" type="radio" value="15" checked="checked">15</input>
+	<input id="number_of_words" name="number_of_words" type="radio" value="15">15</input>
 </div>
 <div style="text-align:center">
 <h3>Score Submission</h3>
