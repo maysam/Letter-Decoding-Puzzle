@@ -8,7 +8,7 @@
 	<script type="text/javascript" src="wordlist.js"></script>
 	<script type="text/javascript" src="checklist.js"></script>
 	<script type="text/javascript" src="init.js"></script>
-	<script type="text/javascript" src="events.js"></script>
+	<script type="text/coffeescript" src="events.js.coffee"></script>
 	<script type="text/javascript" src="display.js"></script>
   <script type="text/coffeescript" src="index.js.coffee"></script>	
 
@@ -66,17 +66,9 @@
 <img id="backButton" src="img/back.png">
 
 <div style=" width: 300px; border: 10px solid; position: absolute; background-color: white; height: 290px; margin-left: -160px; margin-top: -160px;" id="loading_panel" class="centerDiv">
-	<p style="
-    text-align: center;
-    margin: 50px;
-    font-size: 36px;
-">Loading</p>
+	<p style="text-align: center; margin: 50px; font-size: 36px;">Loading</p>
 
-<img src="img/loading.gif" style="
-    vertical-align: middle;
-    margin-left: 37%;
-    display: block;
-">
+<img src="img/loading.gif" style="vertical-align: middle; margin-left: 37%; display: block;">
 </div>
 
 <div style="display:none; width:300px; border: 10px solid; position:absolute; background-color:white; height:290px; margin-left: -160px; margin-top: -160px;" id="setting_panel" class="centerDiv">
