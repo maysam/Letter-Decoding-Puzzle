@@ -204,7 +204,8 @@ function init() {
 			
 		}
 	};
-};
+	return wordCount
+}
 function fillHorizontals() {
 	var count = 0;
 	for(var j=0; j<ROWS; j++) {
@@ -236,7 +237,7 @@ function processTube(i, j, tube) {
 		return 0;
 	}
 
-	var original = tube.slice(0)	//	copy tube array into variable called original
+	var original_length = tube.length	//	copy tube array into variable called original
 	var originali = i
 	//	tube must be connected, so check if it has value?
 	var output = [];
@@ -325,7 +326,7 @@ function processTube(i, j, tube) {
 					//	console.log('checking before : ',max);
 				}
 			}
-			if(original.length-max.length-choices[0]>3) {
+			if(original_length-max.length-choices[0]>3) {
 				//	fit one after
 				max = ''
 				maxi = -1
@@ -392,14 +393,3 @@ function processTube(i, j, tube) {
 }
 
 
-function isConnected(board, i, j) {
-	if (0<=i && i<COLUMNS && 0<=j && j<ROWS) {
-		if (board[i][j] != null && board[i][j] != -1) {
-			board[i][j] = null;
-			isConnected(board, i-1,j);
-			isConnected(board, i+1,j);
-			isConnected(board, i,j-1);
-			isConnected(board, i,j+1);
-		}
-	}
-}
