@@ -14,18 +14,29 @@ newGuess = (wordIndex) ->
     guess[i] = _word.hint[i]
     i++
   guess
+
 stopGame = ->
   if redWords.length is 0 and timing
-    timing = false
-    
-    #	unset the clockHandle
+    timing = false # or unset the clockHandle
     word = null
     if $("#submit_details").is(":checked")
       score = calculateScore()
       letters = countLetters()
-      $.get "scores.php?time=" + time + "&score=" + score + "&fullname=" + $("#fullname").val() + "&email=" + $("#email").val() + "&wordcount=" + wordCount + "&maxsize=" + $("#maximum_word_size").val() + "&letters=" + letters, (data) ->
-        alert data  if data
-
+      if navigator.onLine
+        $.ajax
+          url: "scores.php"
+          dataType: "json"
+          async: true
+          data:
+            time: time
+            score: score
+            fullname: $("#fullname").val()
+            email: $("#email").val()
+            wordcount: wordCount
+            maxsize: $("#maximum_word_size").val()
+            letters: letters
+          success: (data) ->
+            alert data  if data
 
 #	send data, store recoords
 window.mouseDoubleClick = (e) ->

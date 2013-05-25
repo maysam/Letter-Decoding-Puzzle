@@ -57,19 +57,22 @@ window.newGame = ->
         connected = cell is -1
   window.timing = true
   window.time = 0
-  $.ajax
-    url: "topscores.php"
-    dataType: "json"
-    async: true
-    data:
-      wordcount: wordCount
-      fullname: $("#fullname").val()
-
-    success: (data) ->
-      high_score = data.HS
-      top_score = data.TS
-      drawPuzzle()
-      $("#loading_panel").hide()
+  unless navigator.onLine
+    drawPuzzle()
+    $("#loading_panel").hide()
+  else
+    $.ajax
+      url: "topscores.php"
+      dataType: "json"
+      async: true
+      data:
+        wordcount: wordCount
+        fullname: $("#fullname").val()
+      success: (data) ->
+        high_score = data.HS
+        top_score = data.TS
+        drawPuzzle()
+        $("#loading_panel").hide()
 
 $(window).bind "touchstart", (e) ->
   now = new Date().getTime()
