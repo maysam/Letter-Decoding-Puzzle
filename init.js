@@ -77,7 +77,7 @@ function resetGuessList() {
 	guessList = []
 }
 function addGuess(word_index) {
-	var guess = guesses[word_index][guesses[word_index].length-1].join('')
+	var guess = _.last(guesses[word_index]).join('')
 	var key = word_index+' '+guess
 	guessList.push(key)
 }
@@ -212,31 +212,22 @@ function fillHorizontals() {
 		var tube = [];
 		var last_start = 0;
 		for(var i=0; i<COLUMNS; i++) {
-			if ( puzzle[i][j] == -1 ) {
-				if(tube.length >= MIN_LENGTH) {
-					if (wordCount < $("#number_of_words:checked").val()) {
-						count += processTube(last_start, j,tube)
-					}
-				}
-					
-				//	empty tube, maybe we can fit in more
-				tube = [];
-				last_start = i+1;
+			if ( puzzle[i][j] != -1 ) {
+				tube.push(puzzle[i][j])
 			} else {
-				tube.push(puzzle[i][j]);
-				
-			}
-		}
-		if(tube.length >= MIN_LENGTH) {
-			if (wordCount < $("#number_of_words:checked").val()) {
 				count += processTube(last_start, j,tube)
+				tube = []	//	empty tube, maybe we can fit in more
+				last_start = i+1
 			}
 		}
+		count += processTube(last_start, j,tube)
 	}
-
 	return count;
 }
 function processTube(i, j, tube) {
+	if(tube.length < MIN_LENGTH || wordCount == $("#number_of_words:checked").val()) {
+		return 0;
+	}
 	var original_length = tube.length	//	copy tube array into variable called original
 	var originali = i
 	//	tube must be connected, so check if it has value?
@@ -287,109 +278,109 @@ function processTube(i, j, tube) {
 		while(tube.shift() != null)
 			i++;
 	}
-	var c = 0
-	if(output.length>0) {
-		var max = '';
-		var maxi = -1;
-		for (var k = 1; k < output.length; k+=2) {
-			var _word = getWord(output[k]);
-			if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
-				//	find the biggest possible word
-				maxi = output[k-1];
-				max = _word;
-			}
+	if (output.length == 0)
+		return 0
+	var c = 0	
+	var max = '';
+	var maxi = -1;
+	for (var k = 1; k < output.length; k+=2) {
+		var _word = getWord(output[k]);
+		if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
+			//	find the biggest possible word
+			maxi = output[k-1];
+			max = _word;
 		}
-		if (maxi != -1) {
-			//	check to see if we have more than 3 sq on either side to work on
-			choices.push(maxi, max)
-			//	console.log('found: ', max, maxi)
-			if(maxi-originali>3) {
-				//	fit one before
-				//	console.log('checking before');
-				max = ''
-				maxi = -1
-				for (var k = 1; k < output.length; k+=2) {
-					var _word = getWord(output[k])
-					if (_.contains(wordList, _word)  || _.contains(choices, _word) ) {
-						//	try another word
-						continue;
-					};
-					var _wordi = output[k-1];
-					if(_wordi+_word.length< choices[0])
-					if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
-						maxi = output[k-1]
-						max = _word
-					}
+	}
+	if (maxi != -1) {
+		//	check to see if we have more than 3 sq on either side to work on
+		choices.push(maxi, max)
+		//	console.log('found: ', max, maxi)
+		if(maxi-originali>3) {
+			//	fit one before
+			//	console.log('checking before');
+			max = ''
+			maxi = -1
+			for (var k = 1; k < output.length; k+=2) {
+				var _word = getWord(output[k])
+				if (_.contains(wordList, _word)  || _.contains(choices, _word) ) {
+					//	try another word
+					continue;
 				};
-				if(maxi != -1) {
-					choices.push(maxi, max)
-					//	console.log('checking before : ',max);
+				var _wordi = output[k-1];
+				if(_wordi+_word.length< choices[0])
+				if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
+					maxi = output[k-1]
+					max = _word
 				}
-			}
-			if(original_length-max.length-choices[0]>3) {
-				//	fit one after
-				max = ''
-				maxi = -1
-				for (var k = 1; k < output.length; k+=2) {
-					var _word = getWord(output[k])
-					if (_.contains(wordList, _word) || _.contains(choices, _word)) {
-						//	try another word
-						continue
-					}
-					var _wordi = output[k-1]
-					if(choices[0]+choices[1].length<_wordi)
-					if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
-						//	console.log('checking: ', choices[0],choices[1].length,_wordi)
-						maxi = _wordi
-						max = _word
-					}
-				}
-				if(maxi != -1) {
-					choices.push(maxi, max)
-					//	console.log('putting after : ',max);
-				}
-			}
-			for (; c < choices.length; c+=2) {
-				if (wordCount < $("#number_of_words:checked").val()) {
-					maxi = choices[c]
-					max = choices[c+1]
-					//	create word for it
-					var obj = new Word()
-					//	choose a word
-					_word = max
-					//	then put it in the row randomly
-					//	console.log(maxi,j,_word);
-					obj.startx = maxi
-					obj.starty = j
-					obj.length = _word.length-1
-					obj.xp = 1
-					obj.endx = maxi + obj.length
-					obj.endy = j
-					obj.index = wordCount
-					guesses[wordCount] = [[]]
-					wordList[wordCount++] = obj
-					if (maxi> 0) {
-						puzzle[maxi-1][j] = -1
-					}
-					if (maxi +obj.length +1 < COLUMNS) {
-						puzzle[maxi+obj.length+1][j] = -1
-					}
-					for (var counter = 0; counter < _word.length; counter++) {
-						puzzle[maxi+counter][j] = _word[counter]
-						obj.data[counter] = _word[counter]
-						if(j>0)
-							if(puzzle[maxi+counter][j-1] == null)
-								puzzle[maxi+counter][j-1] = -1
-						if(j<ROWS-1)
-							if(puzzle[maxi+counter][j+1] == null)
-								puzzle[maxi+counter][j+1] = -1
-					}
-				} else {
-					c = choices.length
-				}
+			};
+			if(maxi != -1) {
+				choices.push(maxi, max)
+				//	console.log('checking before : ',max);
 			}
 		}
-	}	//	if
+		if(original_length-max.length-choices[0]>3) {
+			//	fit one after
+			max = ''
+			maxi = -1
+			for (var k = 1; k < output.length; k+=2) {
+				var _word = getWord(output[k])
+				if (_.contains(wordList, _word) || _.contains(choices, _word)) {
+					//	try another word
+					continue
+				}
+				var _wordi = output[k-1]
+				if(choices[0]+choices[1].length<_wordi)
+				if(max.length<_word.length || (max.length==_word.length && Math.random()>0.5)) {
+					//	console.log('checking: ', choices[0],choices[1].length,_wordi)
+					maxi = _wordi
+					max = _word
+				}
+			}
+			if(maxi != -1) {
+				choices.push(maxi, max)
+				//	console.log('putting after : ',max);
+			}
+		}
+		for (; c < choices.length; c+=2) {
+			if (wordCount < $("#number_of_words:checked").val()) {
+				maxi = choices[c]
+				max = choices[c+1]
+				//	create word for it
+				var obj = new Word()
+				//	choose a word
+				_word = max
+				//	then put it in the row randomly
+				//	console.log(maxi,j,_word);
+				obj.startx = maxi
+				obj.starty = j
+				obj.length = _word.length-1
+				obj.xp = 1
+				obj.endx = maxi + obj.length
+				obj.endy = j
+				obj.index = wordCount
+				guesses[wordCount] = [[]]
+				wordList[wordCount++] = obj
+				if (maxi> 0) {
+					puzzle[maxi-1][j] = -1
+				}
+				if (maxi +obj.length +1 < COLUMNS) {
+					puzzle[maxi+obj.length+1][j] = -1
+				}
+				for (var counter = 0; counter < _word.length; counter++) {
+					puzzle[maxi+counter][j] = _word[counter]
+					obj.data[counter] = _word[counter]
+					if(j>0)
+						if(puzzle[maxi+counter][j-1] == null)
+							puzzle[maxi+counter][j-1] = -1
+					if(j<ROWS-1)
+						if(puzzle[maxi+counter][j+1] == null)
+							puzzle[maxi+counter][j+1] = -1
+				}
+			} else {
+				c = choices.length
+			}
+		}
+	}
 	return c/2
 }
 
