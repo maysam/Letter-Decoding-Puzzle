@@ -51,15 +51,7 @@ function makeTree() {
 
    };
    //  push something to indicated if you are up to here, you have a valid word
-   /*
-     CHASES
-     DINE
-     FASTED
-     GRAPE
-     ITS
-     SOL 
-   */
-   if(_.indexOf(temp, 'YES') == -1) {
+   if(!_.contains(temp, 'YES')) {
      //  make sure it's not a duplicated word
      temp.push('YES');
    }
@@ -81,8 +73,6 @@ function supports_html5_storage() {
 }
 
 function newGame() {
- MIN_LENGTH = 3
- MAX_LENGTH = 5
  tries = 0
  resetGuessList()
  do {

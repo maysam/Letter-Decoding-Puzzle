@@ -47,122 +47,28 @@ function mouseClick(e){
      break
    }
  }
-
- if (!timing) {
-   //  nothing to do here
-   drawPuzzle()
-   return false
- }
-
- var x = Math.floor((e.pageX-$("#canvas").offset().left -PUZZLE_LEFT) / SIZE);
- var y = Math.floor((e.pageY-$("#canvas").offset().top -PUZZLE_TOP) / SIZE);
- if (0<=x && x< COLUMNS && 0<=y && y< ROWS) {
-        //  selecting a new word-code in the puzzle
-        var oldid = -1;
-        if (word) {
-         oldid = word.index;
-        }
-        var newid = detectWord(x, y, oldid);
-        if (newid != -1 && newid != oldid) { //  something new
-     word = wordList[newid];
-     word.index = newid; //  fix for removing single words
-     if(!guesses[newid]) {
-       guesses[newid] = [newGuess(newid)];
-     }
-       current_guess = guesses[newid][guesses[newid].length-1];
-       current_index = newid
-       scroll_index = 0
-     }
-    } else {
-     //  check if the bars are clicked
-//         ...
-    }
-//?? click on side bar
-if (word) {
-   var x = Math.floor((e.pageX-$("#canvas").offset().left - PUZZLE_LEFT -  (4-word.length)*0.5*SIZE )/(SIZE+4.5)+0.25)
-   var y = Math.floor((e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - ROWS-0.5)
-   var char = '';
-   if ( 0 <= x && x <= word.length) {
-     //  ignore if this column is hinted already
-     if (!word.hint[x]) {
-       if ( 0 <= y && y < 5 ) {
-         g = GROUP[word.data[x].charCodeAt(0)-65];
-         if((g == 5) && (y==4)) {
-           // Q Z
-             var tx = (e.pageX-$("#canvas").offset().left - PUZZLE_LEFT-  (4-word.length)*0.5*SIZE )/(SIZE+4.5) +.25 - x 
-           var ty = (e.pageY-$("#canvas").offset().top - PUZZLE_TOP )/SIZE - (ROWS+0.5) - y
-           if((tx+ty)>0.85) {
-             char = ALPHA[g][y+1];
-           } else {
-             char = ALPHA[g][y];
-           }
-         } else {
-           char = ALPHA[g][y];
-         }
-         if (char != '') {
-           //  toggle char on choices index x
-           current_guess[x] = char;
-           _word = current_guess.join('');
-           if(_word.length > word.length) {
-             found = _.indexOf(checkList,_word);
-             if ( found != -1) {
-               //  is it a new guess?
-               repeatFlag = guesses[current_index].some(function (x) { return (x.join() == current_guess.join() && x !== current_guess) })
-               if(!repeatFlag) {
-                 //  add to the guess list
-                 addGuess(current_index)
-                 current_guess = newGuess(current_index);
-                 var g = guesses[current_index].push(current_guess);
-               }
-             }
-           }
-         }
-       }
-     }
-   }
-   
-   //  else check if the cross next to the guesses has been clicked
-   //  only if there is anything to guess
-   _scroll_index = Math.floor(scroll_index)
-   for (var i = _scroll_index; i < guesses[current_index].length  && i < 5+_scroll_index; i++) 
-   if ( i > 0 ) {
-     var actual_i = guesses[current_index].length - i - 1
-     var left = x_left
-         var top = x_top + SIZE*(i - _scroll_index);
-     var x = e.pageX-$("#canvas").offset().left - left;
-     var y = e.pageY-$("#canvas").offset().top - top;
-     if( 0 <= x && x <= SIZE-10 && 0 <= y && y <= SIZE-10) {
-       removeGuess(current_index, actual_i)
-       guesses[current_index].splice(actual_i,1)
-     }
-     }
- }
- drawPuzzle()
+  drawPuzzle()
 }
-function detectWord(i, j, current_choice) {
+function detectWord(i, j, current_word) {
  //  returns the index of the word which lays on (i,j)
- if (!puzzle || puzzle[i][j]==0)
-   //  not a word
-   return -1
  for (var k = 0; k < wordCount; k++) {
-   if (k != current_choice) {
-     tmp_word = wordList[k]
-     if(tmp_word.startx <= i && i<= tmp_word.endx && tmp_word.starty <= j && j<= tmp_word.endy) { 
-       return k
-     }
+   tmp_word = wordList[k]
+   if(tmp_word.startx <= i && i<= tmp_word.endx && tmp_word.starty <= j && j<= tmp_word.endy && tmp_word != current_word) { 
+     return tmp_word
    }
  }
- return current_choice
+ return current_word
 }
 
 
 function mouseDoubleClick(e){
- console.log('mouseDoubleClick')
- if(e.originalEvent)
-   e=e.originalEvent
- if ( !puzzle || $('#setting_panel').css('display') == 'block' ) {
-   return true;
- }
+  e.preventDefault()
+  e.stopPropagation()
+   if(e.originalEvent)
+     e=e.originalEvent
+   if ( !puzzle || $('#setting_panel').css('display') == 'block' ) {
+     return true;
+   }
 
  var x = (e.touches) ? e.touches[0].pageX : e.pageX;
  var y = (e.touches) ? e.touches[0].pageY : e.pageY;
@@ -174,9 +80,11 @@ function mouseDoubleClick(e){
    if ( puzzle[x][y] != null && puzzle[x][y] != -1 && hints[x][y] == null) {
      hint = hints[x][y] = puzzle[x][y];
      //  remove all guesses without this hint
-     i = -1
-     while (i < (i = detectWord(x,y,i))) {
-       var _word = wordList[i]
+     var _word = null
+     for (var i_temp = 0; i_temp < 2; i_temp++) //  TODO: refactor this
+      if(_word = detectWord(x,y,_word))
+      {
+        i = _word.index
        //  check if the hint is for this word
        k = x + y - _word.startx - _word.starty;
        _word.hint[k] = hint
@@ -185,7 +93,6 @@ function mouseDoubleClick(e){
          if (_guess[k] != hint) {
            //  remove guess
            removeGuess(i, j)
-           guesses[i].splice(j,1)
          }
        }
        var _guess = guesses[i][guesses[i].length -1]
@@ -194,7 +101,6 @@ function mouseDoubleClick(e){
        if (_word.hint.join('').length == _word.length + 1) {
          // remove guess if repeated
          // no need to remove, we don't show the last guess for full hints if repeated
-//         continue
          repeatFlag = guesses[i].some(function (x) { return (x.join() == _guess.join() && x !== _guess) })
          if (repeatFlag) {
            guesses[i].pop()

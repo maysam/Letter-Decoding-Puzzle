@@ -4,7 +4,7 @@
 	<link rel="stylesheet" href="style.css" type="text/css" />
 	<script type="text/javascript" src="jquery.min.js"></script>
 	<script type="text/javascript" src="underscore.min.js"></script>
-	<script type="text/javascript" src="coffee-script.js"></script>
+	<!-- <script type="text/javascript" src="coffee-script.js"></script> -->
 	<script type="text/javascript" src="wordlist.js"></script>
 	<script type="text/javascript" src="checklist.js"></script>
 	<script type="text/javascript" src="init.js"></script>
@@ -18,12 +18,11 @@
 <body>
 <script type="text/coffeescript">
 	window.agent = navigator.userAgent.toLowerCase()
-	window.isiOS = agent.indexOf("iphone") >= 0 or agent.indexOf("ipad") >= 0
+	window.isiOS = _.contains(agent, "iphone") or _.contains(agent, "ipad")
 	if isiOS
 	  window.SIZE = 29
 	  window.COLUMNS = 10
 	  window.ROWS = 9
-	  window.MAX_LENGTH = Math.ceil(COLUMNS / 2)
 	  window.PUZZLE_LEFT = 15
 	  window.PUZZLE_TOP = 15
 	  window.width = 320
@@ -32,7 +31,6 @@
 	  window.SIZE = 30
 	  window.COLUMNS = 11
 	  window.ROWS = 9
-	  window.MAX_LENGTH = Math.ceil(COLUMNS / 2)
 	  window.PUZZLE_LEFT = SIZE / 2
 	  window.PUZZLE_TOP = SIZE / 2
 	  window.width = (COLUMNS + 1) * SIZE
