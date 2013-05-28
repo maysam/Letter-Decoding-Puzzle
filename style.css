@@ -5,3 +5,9 @@
 img {
 	display: none;
 }
+canvas {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}

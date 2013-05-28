@@ -122,7 +122,6 @@ function Word() {
 }
 
 function init() {
-	//	console.log('initializing ...');
 	//	create puzzle
 	puzzle = [];
 	guesses = [];

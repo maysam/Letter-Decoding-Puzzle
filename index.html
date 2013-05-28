@@ -16,31 +16,6 @@
 
 </head>
 <body>
-<script type="text/coffeescript">
-	window.agent = navigator.userAgent.toLowerCase()
-	window.isiOS = _.contains(agent, "iphone") or _.contains(agent, "ipad")
-	if isiOS
-	  window.SIZE = 29
-	  window.COLUMNS = 10
-	  window.ROWS = 9
-	  window.PUZZLE_LEFT = 15
-	  window.PUZZLE_TOP = 15
-	  window.width = 320
-	  window.height = 480
-	else
-	  window.SIZE = 30
-	  window.COLUMNS = 11
-	  window.ROWS = 9
-	  window.PUZZLE_LEFT = SIZE / 2
-	  window.PUZZLE_TOP = SIZE / 2
-	  window.width = (COLUMNS + 1) * SIZE
-	  window.height = (7.5 + ROWS) * SIZE
-	canvas = $("#canvas")
-	canvas.css 'margin-left', -0.5*width 
-	canvas.css 'width', width 
-	canvas.css 'height', height 
-	window.context = canvas[0].getContext "2d"
-</script>
 <canvas id="canvas" style="position:absolute; background-color:#dddddd; left: 50%; margin-left:-180px;  width:360px;" width="360px" height="495"></canvas>
 <img src="img/blue-tile.png" id="blue-tile">
 <img src="img/black-tile.png" id="black-tile">
@@ -101,5 +76,31 @@ Submit Details
 <input type=button value="Save" id="saveButton" style="width:150px" />
 </div>
 </div>
+<script type="text/javascript">
+	window.agent = navigator.userAgent.toLowerCase()
+	window.isiOS = _.contains(agent, "iphone") || _.contains(agent, "ipad")
+	if(isiOS) {
+	  window.SIZE = 29
+	  window.COLUMNS = 10
+	  window.ROWS = 9
+	  window.PUZZLE_LEFT = 15
+	  window.PUZZLE_TOP = 15
+	  window.width = 320
+	  window.height = 480
+	} else {
+	  window.SIZE = 30
+	  window.COLUMNS = 11
+	  window.ROWS = 9
+	  window.PUZZLE_LEFT = SIZE / 2
+	  window.PUZZLE_TOP = SIZE / 2
+	  window.width = (COLUMNS + 1) * SIZE
+	  window.height = (7.5 + ROWS) * SIZE
+	}
+	canvas = $("#canvas")
+	canvas.css('margin-left', -0.5*width)
+	canvas.css('width', width)
+	canvas.css('height', height)
+	window.context = canvas[0].getContext("2d")
+</script>
 </body>
 </html>

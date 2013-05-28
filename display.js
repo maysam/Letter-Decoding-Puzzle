@@ -63,7 +63,7 @@ function drawMenu() {
 	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { if(!$('#loading_panel').is(':visible')) { 
 		$('#loading_panel').show()
 		setTimeout(function(){ newGame() }, 1)
-		 
+
 		} }])
 
 	if (timing && redWords && redWords.length == 0 && guess_count > 0) {
@@ -582,15 +582,21 @@ function plan(left, top, width, height, char, offset, i, group) {
 			setTimeout(function(char, offset, i, group){ return function() {
 	     	current_guess[offset] = char;
 	     	_word = current_guess.join('');
-	     	if (_word.length > word.length && _.contains(checkList,_word))
-	     	{
+	     	if (_word.length > word.length && _.contains(checkList,_word)) {
 	      	//  is it a new guess?
 	       	repeatFlag = _.some(_.initial(guesses[current_index]), function (x) { return ( _.isEqual(x, current_guess) ) })
 	       	if(!repeatFlag) {
 	        	//  add to the guess list
-	          addGuess(current_index)
-	          current_guess = newGuess(current_index);
-	          guesses[current_index].push(current_guess);
+	        	setTimeout(function(){
+			      			_word = current_guess.join('');
+				     			if (_word.length > word.length && _.contains(checkList,_word)) {
+				      
+							          addGuess(current_index)
+							          current_guess = newGuess(current_index);
+							          guesses[current_index].push(current_guess);
+							          drawPuzzle()
+							    }
+		        	}, 200)
 	        }
 	      }
 				Animate(-1, undefined)
