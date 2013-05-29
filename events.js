@@ -4,6 +4,7 @@ although beleiving in u drives u forward, you should be beleive so much so to op
 dont confuse completing the job with proving your worth
 */
 function newGuess(wordIndex) {
+  return _.clone(current_guess)
  var guess = [];
  var _word = wordList[wordIndex];
  //  fix the hints
