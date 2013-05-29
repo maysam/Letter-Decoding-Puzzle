@@ -544,7 +544,6 @@ function drawAlphaBar(group, offset) {
       	if (isZ) {
       		context.setLineDash([5,2]);
       	};
-        context.setLineDash([5,2]);
 				context.beginPath();
 				context.moveTo(left+SIZE-1, top+SIZE-1); // give the (x,y) coordinates
 				context.lineTo(left+SIZE-1, top+1);
