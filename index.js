@@ -1,18 +1,3 @@
-if (!('indexOf' in Array.prototype)) {
-  Array.prototype.indexOf= function(find, i /*opt*/) {
-   if (i === undefined)
-     i = 0
-   if (i<0)
-     i += this.length
-   if (i<0)
-     i = 0
-   for (var n= this.length; i<n; i++)
-     if (i in this && this[i]===find)
-       return i
-   return -1
- }
-}
-
 document.addEventListener('touchmove', function(event) {
   event.preventDefault();
 }, false); 
@@ -31,10 +16,8 @@ $(window).bind('touchstart', function(e){
        $(this).data('lastTouch', now);
 })
 function makeTree() {
- for (var i = 0; i < dictionary.length; i++) {
-   _word = dictionary[i];
-   if( _word.length<3 || _word.length>9)
-     continue;
+  dictionary = _.filter(dictionary, function (a){ return a.length >= MIN_LENGTH && a.length <= MAX_LENGTH })
+  _.each(dictionary, function(_word){
    temp = tree;
    for (var j = 0; j < _word.length; j++) {
      //  where should the character be listed at
@@ -56,13 +39,12 @@ function makeTree() {
      temp.push('YES');
    }
    //  if tree has yes then take it as a word
- }
+ })
 }
 var high_score = ''
 var top_score = ''
 var dictionary = easyList
 var tree = [0,null]
-makeTree()
 
 function supports_html5_storage() {
   try {
@@ -121,11 +103,14 @@ function newGame() {
 }
 
 $(window).load(function () {
+  makeTree()
  $("#setting_panel").hide()
- $("#number_of_words[value=15]").attr('checked', true);
+ $("#number_of_words[value=9]").attr('checked', true);
  if (supports_html5_storage()) {
    if(localStorage.fullname)
      $('#fullname').val(localStorage.fullname)
+   if(localStorage.email)
+     $('#email').val(localStorage.email)
  }
 
  window.ondblclick = mouseDoubleClick

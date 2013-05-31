@@ -11,7 +11,7 @@ if ($wordcount > 15) {
 $list = array();
 if (($handle = fopen("datafile", "r")) !== FALSE) {
     while (($data = fgetcsv($handle)) !== FALSE) {
-        $list[] = $data;    
+        $list[] = $data;
     }
     fclose($handle);
 }

@@ -46,7 +46,7 @@ function drawMenu() {
 	var top = PUZZLE_TOP+SIZE*(ROWS+6);
 	context.drawImage($('#settings-button')[0], left, top, SIZE*0.9, SIZE*0.9)
 	events.push([left, top, SIZE*0.9, SIZE*0.9, function () { $('#setting_panel').show() }])
-	
+
 	var left = PUZZLE_LEFT + SIZE*0.75 + left_offset;
 	var top = PUZZLE_TOP + SIZE*(ROWS+6);
 	var score = calculateScore()
@@ -60,7 +60,7 @@ function drawMenu() {
 	};
 
 	context.drawImage($('#new-button')[0], left, top, SIZE*1.6, SIZE*0.8)
-	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { if(!$('#loading_panel').is(':visible')) { 
+	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { if(!$('#loading_panel').is(':visible')) {
 		$('#loading_panel').show()
 		setTimeout(function(){ newGame() }, 1)
 
@@ -74,20 +74,25 @@ function drawMenu() {
 	context.fillStyle = COLORS[0];
 	context.strokeStyle    = "#666666";
 	context.font = 'bold 16px sans-serif';
-	context.fillText( 'HS:'+ high_score +' TS:'+top_score, left + SIZE*0.9,top + SIZE*0.4);
-	left = width - SIZE*2
+	text = ''
+	if(high_score != '')
+		text += 'HS:'+ high_score +' '
+	if(top_score != '')
+		text += 'TS:'+top_score
+	context.fillText( text, left + SIZE*0.5,top + SIZE*0.4);
+	left = width - SIZE*2.6
 	context.fillStyle    = "#cccccc";
-	context.fillRect(left, top, SIZE*1.8, SIZE*0.8);
+	context.fillRect(left, top, SIZE*2.4, SIZE*0.8);
 	context.strokeStyle    = "#666666";
-	context.strokeRect(left, top, SIZE*1.8, SIZE*0.8);
+	context.strokeRect(left, top, SIZE*2.4, SIZE*0.8);
 	context.fillStyle = COLORS[0];
 	context.font = 'bold 16px sans-serif';
-	context.fillText( score, left + SIZE*0.9,top + SIZE*0.4);
+	context.fillText( (time%1000) + ' / ' +score, left + SIZE*0.9,top + SIZE*0.4);
 }
 
 function drawPuzzle() {
 	events = []
-	context.canvas.width = context.canvas.width;	
+	context.canvas.width = context.canvas.width;
 	context.textBaseline = 'middle';
     context.textAlign = "center";
     context.lineWidth = 1
@@ -115,7 +120,7 @@ function drawPuzzle() {
 			var textLeft = left + SIZE/2;
 			var textTop = top + SIZE/2;
 			//	show the chosen alphabet in the puzzle
-			//	if multiple words, just the last one, 				
+			//	if multiple words, just the last one,
 			word1 = detectWord(i,j,null);
 			if (word1 == null) {
 				//	empty spot
@@ -226,7 +231,7 @@ function drawPuzzle() {
 				if (hints[i][j] != null && _.indexOf(list2, hints[i][j]) == -1 ) {
 					redWords[index2]=index2
 				}
-			
+
 				if (redLetters[index2] == undefined) {
 					redLetters[index2] = []
 				}
@@ -262,7 +267,7 @@ function drawPuzzle() {
 			}
 			var ch1 = '';
 			var ch2 = '';
-			
+
 			if (index1 != -1) {
 				_word = wordList[index1];
 				//	show the last guess
@@ -330,7 +335,7 @@ function drawPuzzle() {
 	context.font = 'bold 12px sans-serif'
 
 	context.drawImage($('#black-tile-logo')[0], empty_spot.x, empty_spot.y , 2*SIZE, SIZE)
-	
+
 	//	draw red rectangle around words needing attention
 
 	for (var i = 0; i < redWords.length; i++) {
@@ -364,8 +369,8 @@ function drawPuzzle() {
 			}
             drawAlphaBar(g,offset++);
         }
-		
-		
+
+
 		max = guesses[current_index].length
 		while (scroll_index > max - 5 && scroll_index > 0) {
 			scroll_index --
@@ -378,7 +383,7 @@ function drawPuzzle() {
 			var j = old_i - _scroll_index
 			if (_guess = _.last(guesses[current_index])) {
 				if (word.hint.join() == word.data.join() && _.some(guesses[current_index], function (x) { return ( _.isEqual(x, _guess) && x !== _guess) }))
-					continue 
+					continue
 			}
 			for (var k = 0; k <= word.length + 1; k++) {
       	var left = PUZZLE_LEFT + (SIZE+4)*(word.length + 0.7) + k * (SIZE-5) + (4-word.length)*0.75*SIZE + 5;
@@ -388,7 +393,7 @@ function drawPuzzle() {
 					if (!x_left) {
 						x_left = left+2
 						x_top = top+2
-					}	
+					}
 				}
 				if ( i < guesses[current_index].length-1 && k == word.length+1 ) {
 					if (word.hint.join() != word.data.join()) {
@@ -417,7 +422,7 @@ function drawPuzzle() {
 							context.lineWidth = 1;
 							context.strokeRect(left+2 ,top+2 , SIZE-10, SIZE-10);
 						} //if k
-					}		// else if hint != data	
+					}		// else if hint != data
     		}	//	if i
   		} // k
 		  // old_i
@@ -445,29 +450,29 @@ function Animate(offset, new_choice) {
 }
 function charOffset(current_index, offset) {
 	ch = current_guess[offset]
-	if (ch == undefined) 
+	if (ch == undefined)
 		return 0
 	// current_guess = _.last(guesses[current_index])
 	var i = _.indexOf(ALPHA[group(ch)], ch)
 	if(i==5)
 		i=4
 	return i-2
-} 
+}
 function drawAlphaBar(group, offset) {
   var underliners = []
   if (redLetters[current_index] != undefined && redLetters[current_index][offset] != undefined)
 		underliners = redLetters[current_index][offset]
   var selected_data = ALPHA[group];
 	var left = PUZZLE_LEFT + (SIZE+4.5)*(offset-0.25) + (4-word.length)*0.5*SIZE + 1;
-	var _top = PUZZLE_TOP+SIZE*(ROWS+0.5);    
-	
+	var _top = PUZZLE_TOP+SIZE*(ROWS+0.5);
+
 	var color = COLORS[group]
 	if(word.hint[offset]) {
   	color = COLORS[6]
   }
-	
+
 	context.drawImage($('#'+ color +'-decoder')[0], left, _top, SIZE, SIZE*5)
-    
+
   for (var i_counter=0; i_counter<5; i_counter++) {
   	i = (5 + i_counter + charOffset(current_index, offset)) % 5
   	//	drawing the decoders under the puzzle
@@ -530,7 +535,7 @@ function drawAlphaBar(group, offset) {
       	if (isQ) {
       		context.setLineDash([5,2]);
       	};
-        
+
 				context.beginPath();
 				context.moveTo(left+1, top+1); // give the (x,y) coordinates
 				context.lineTo(left+SIZE-1, top+1);
@@ -575,7 +580,7 @@ function drawAlphaBar(group, offset) {
 }
 
 function plan(left, top, width, height, char, offset, i, group) {
-	return [left, top, width, height, function (char, offset, i, group) { 
+	return [left, top, width, height, function (char, offset, i, group) {
 		return function() {
 			Animate(offset, char)
 			setTimeout(function(char, offset, i, group){ return function() {
@@ -589,7 +594,7 @@ function plan(left, top, width, height, char, offset, i, group) {
 	        	setTimeout(function(){
 			      			_word = current_guess.join('');
 				     			if (_word.length > word.length && _.contains(checkList,_word)) {
-				      
+
 							          addGuess(current_index)
 							          current_guess = newGuess(current_index);
 							          guesses[current_index].push(current_guess);

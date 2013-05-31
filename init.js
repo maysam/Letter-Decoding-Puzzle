@@ -53,7 +53,7 @@ var ALPHA = new Array(
 );
 var GROUP = new Array(1,3,2,1,2,1,5,4,3,2,2,5,4,1,4,2,5,4,3,5,5,4,1,3,3,5);
 function group(char) {
-	return GROUP[char.charCodeAt(0)-65]	
+	return GROUP[char.charCodeAt(0)-65]
 }
 
 var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -100,6 +100,7 @@ var time = 0, timing = false
 var clockHandle = setInterval(function clock() {
 	if (timing) {
 		time ++
+		drawPuzzle()
 	}
 }, 1000)
 
@@ -138,7 +139,7 @@ function init() {
 		}
 	}
 
-  wordList = [];	//	information about the words in the puzzle 
+  wordList = [];	//	information about the words in the puzzle
   						//	{ startx:0, starty:0, xp:0, yp:0, endx:0, endy:0, length:0, data:Array(), choices:Array() };
   wordCount = 0;		//	number of words
   word = null;		//	selected word
@@ -172,7 +173,7 @@ function init() {
 		}
 	}
 	var count = fillHorizontals();
-	// look for single 
+	// look for single
 	for (var i = 0; i < wordCount; i++) {
 
 		var single = true;
@@ -202,7 +203,7 @@ function init() {
 			for (var j = 0; j <= obj.length; j++) {
 				puzzle[obj.startx][obj.starty+j] = null;
 			}
-			
+
 		}
 	};
 	return wordCount
@@ -234,7 +235,7 @@ function processTube(i, j, tube) {
 	//	tube must be connected, so check if it has value?
 	var output = [];
 	var choices = [];
-			
+
 	while(tube != null && tube.length >= 3 && _.some(tube)) {
 		//	process tube
 		var example = [tree];
@@ -280,7 +281,7 @@ function processTube(i, j, tube) {
 	}
 	if (output.length == 0)
 		return 0
-	var c = 0	
+	var c = 0
 	var max = '';
 	var maxi = -1;
 	for (var k = 1; k < output.length; k+=2) {

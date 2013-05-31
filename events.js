@@ -5,13 +5,6 @@ dont confuse completing the job with proving your worth
 */
 function newGuess(wordIndex) {
   return _.clone(current_guess)
- var guess = [];
- var _word = wordList[wordIndex];
- //  fix the hints
- for (var i = 0; i <= _word.length; i++) {
-   guess[i] = _word.hint[i];
- }
- return guess;   
 }
 
 function stopGame() {
@@ -23,7 +16,7 @@ function stopGame() {
      var score = calculateScore()
      var letters = countLetters()
      if(navigator.onLine)
-       $.get('scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&maxsize=' + $('#maximum_word_size').val() + '&letters=' + letters , function(data) { if(data) alert(data) } )
+       $.get('scores.php?time='+time+'&score='+score+'&fullname='+$('#fullname').val()+'&email='+$('#email').val()+'&wordcount='+ wordCount + '&letters=' + letters , function(data) { if(data) alert(data) } )
      //  send data, store recoords
    }
  }
@@ -54,7 +47,7 @@ function detectWord(i, j, current_word) {
  //  returns the index of the word which lays on (i,j)
  for (var k = 0; k < wordCount; k++) {
    tmp_word = wordList[k]
-   if(tmp_word.startx <= i && i<= tmp_word.endx && tmp_word.starty <= j && j<= tmp_word.endy && tmp_word != current_word) { 
+   if(tmp_word.startx <= i && i<= tmp_word.endx && tmp_word.starty <= j && j<= tmp_word.endy && tmp_word != current_word) {
      return tmp_word
    }
  }
