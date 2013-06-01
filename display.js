@@ -87,7 +87,7 @@ function drawMenu() {
 	context.strokeRect(left, top, SIZE*2.4, SIZE*0.8);
 	context.fillStyle = COLORS[0];
 	context.font = 'bold 16px sans-serif';
-	context.fillText( (time%1000) + ' / ' +score, left + SIZE*0.9,top + SIZE*0.4);
+	context.fillText( (time%1000) + ' / ' +score, left + SIZE*1.1,top + SIZE*0.4);
 }
 
 function drawPuzzle() {
@@ -184,7 +184,7 @@ function drawPuzzle() {
 				// TODO: add target word to the event
 				if (target_word == word && word2)
 					target_word = word2
-				events.push([left, top, SIZE, SIZE, function (i,j) { return function (x,y) {
+				events.push([left, top, SIZE, SIZE, function (i,j) { return function () {
 	        var newWord = detectWord(i, j, word);
 	        if (newWord && newWord != word) { //  something new
 						word = newWord;

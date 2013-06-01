@@ -42,7 +42,7 @@ foreach ($list as $key => $item) {
 if($data)
     krsort($data);
 
-const MAX_COUNT = 1000;
+const MAX_COUNT = 20;
 
 if ($new_record) {
     if (count($data[$wordcount]) > MAX_COUNT) {
@@ -99,15 +99,32 @@ if ($html_display) {
 <body>
     <?php
 }
+function timeString($item) {
+    $time_data = $item->time;
+    $time_string = $time_data % 60;
+    if(strlen($time_string) < 2)
+        $time_string = '0'.$time_string;
+    if($time_data = floor($time_data/60)) {
+        $time_string = ($time_data % 60) . ':' .$time_string;
+        if(strlen($time_string) < 5)
+            $time_string = '0'.$time_string;
+    }
+    if ($time_data = floor($time_data/60)) {
+        $time_string = $time_data . ':' . $time_string;
+        if(strlen($time_string) < 7)
+            $time_string = '0'.$time_string;
+    }
+    return $time_string;
+}
 if($original) {
     usort($original, 'time_sort');
     if ($html_display) {
-        echo "<h1>Fastest Time</h1>";
+        echo "<h3>Fastest Time</h3>";
     }
     foreach ($original as $counter => $item) {
-        if ($counter < 10) {
+        if ($counter < MAX_COUNT) {
             if ($html_display) {
-                echo ($counter+1)."- Time: {$time_string}, Score: {$item->score}, {$item->fullname}<br/>";
+                echo ($counter+1).'- Time: '.timestring($item).", Words: {$item->wordcount}, Score: ".$item->score.', '.$item->fullname.'<br/>';
             }
         }
         if ($new_record == $item->id ) {
@@ -125,18 +142,10 @@ foreach ($data as $wordcount => $list) {
     $counter = 0;
     foreach ($list as $key => $item) {
         # code...
-        if ($counter++ <= MAX_COUNT) {
+        $counter = $key+1;
+        if ($counter <= MAX_COUNT) {
             if ($html_display) {
-                $time_data = $item->time;
-                $time_string = $time_data % 60;
-                $time_data = floor($time_data/60);
-                    $time_string = ($time_data % 60) . ':' . $time_string;
-                if ($time_data>0) {
-                    $time_data = floor($time_data/60);
-                    if ($time_data) {
-                        $time_string = $time_data . ':' . $time_string;
-                    }
-                }
+                $time_string = timeString($item);
                 echo "$counter- Score: {$item->score}, Time: {$time_string} {$item->fullname}<br/>";
             }
         }
@@ -151,16 +160,16 @@ if ($html_display) {
     <?php
 }
 if ($new_record) {
+    $msg = array();
     if ($ranking) {
-        echo 'Vow, you ranked '.$ranking;
-    } else {
-        echo 'Next time, be faster';
+        $msg[] = 'Vow, you ranked '.$ranking;
     }
     if($time_ranking <= 10) {
-        if($ranking)
-            echo "\r\n";
-        echo "Your time ranked in the top $time_ranking";
-
+        $msg[] = "Your time ranked in the top $time_ranking";
     }
+    if(count($msg) == 0) {
+        $msg[] = 'Next time, be faster';
+    }
+    echo join("\r\n", $msg);
 }
 ?>

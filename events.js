@@ -37,11 +37,16 @@ function mouseClick(e){
  for (var i = events.length - 1; i >= 0; i--) {
    var ev = events[i]
    if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3]) {
-     ev[4](x, y)
+     setTimeout(function(x,y) {
+      return function(){
+        ev[4](x, y);
+        drawPuzzle()
+      }
+    }(x,y), 10)
+     events = []
      break
    }
  }
-  drawPuzzle()
 }
 function detectWord(i, j, current_word) {
  //  returns the index of the word which lays on (i,j)
