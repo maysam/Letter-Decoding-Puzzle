@@ -1,6 +1,6 @@
 document.addEventListener('touchmove', function(event) {
   event.preventDefault();
-}, false); 
+}, false);
 
 $(window).bind('touchstart', function(e){
        var now = new Date().getTime();
@@ -66,7 +66,7 @@ function newGame() {
    var board = puzzle.slice(0);
    for(var i=0; i<COLUMNS; i++) {
      board[i] = board[i].slice(0);
-   }   
+   }
    if(wordList.length>0) {
      isConnected(board, wordList[0].startx, wordList[0].starty);
    }
@@ -97,7 +97,7 @@ function newGame() {
   })
   else {
      drawPuzzle()
-     $('#loading_panel').hide()    
+     $('#loading_panel').hide()
   }
 
 }
@@ -136,16 +136,13 @@ $(window).load(function () {
      x = x - $("#canvas").offset().left
      y = y - $("#canvas").offset().top
 
-     for (var i = events.length - 1; i >= 0; i--) {
-       var ev = events[i]
-       if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3]) {
+     _.each(events, function(ev){
+      if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3] && 'scroll_event' == ev[5]) {
          ev[4](x, y)
          drawPuzzle()
-         continue
        }
-     }
-
-        }
+     })
+  }
  }
  $(window).bind('click', mouseClick)
  window.onmousemove = mouseMove

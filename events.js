@@ -33,20 +33,12 @@ function mouseClick(e){
 
  x = x - $("#canvas").offset().left
  y = y - $("#canvas").offset().top
-
- for (var i = events.length - 1; i >= 0; i--) {
-   var ev = events[i]
+ _.each(events, function(ev){
    if (ev[0] <= x && x <= ev[0] + ev[2] && ev[1] <= y && y <= ev[1] + ev[3]) {
-     setTimeout(function(x,y) {
-      return function(){
         ev[4](x, y);
         drawPuzzle()
-      }
-    }(x,y), 10)
-     events = []
-     break
-   }
- }
+    }
+   })
 }
 function detectWord(i, j, current_word) {
  //  returns the index of the word which lays on (i,j)

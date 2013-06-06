@@ -142,13 +142,7 @@ function drawPuzzle() {
 			index1 = word1 && word1.index
 			index2 = word2 && word2.index
 			if ( hints[i][j] != null ) {
-				//	if there is a hint, just go ahead with it
-				context.drawImage($('#white-tile')[0], left, top, SIZE, SIZE)
-
-				context.fillStyle = COLORS[0];
-				context.font = 'bold 20px sans-serif';
-        context.fillText(hints[i][j], textLeft, textTop);
-
+				g = 6;
 				//	also red word if the hint is not in the guesses
         if (word1) {
 					list1 = [];
@@ -175,15 +169,19 @@ function drawPuzzle() {
 						}
 					}
 				}
-				continue;
 			}
-
+			else
 			if(puzzle[i][j] != null && puzzle[i][j] != -1) {
 				g = GROUP[puzzle[i][j].charCodeAt(0)-65];
 				target_word = word1
 				// TODO: add target word to the event
 				if (target_word == word && word2)
 					target_word = word2
+			} else {
+				g = 0;
+				continue
+			}
+			if (g != 0) {
 				events.push([left, top, SIZE, SIZE, function (i,j) { return function () {
 	        var newWord = detectWord(i, j, word);
 	        if (newWord && newWord != word) { //  something new
@@ -196,13 +194,15 @@ function drawPuzzle() {
 						scroll_index = 0
 					}
 				}}(i,j)])
-			} else {
-				g = 0;
-				continue
-			}
 
+			}
 			context.drawImage($('#'+COLORS[g]+'-tile')[0], left, top, SIZE, SIZE)
 
+			if (g == 6) {
+				context.fillStyle = COLORS[0];
+				context.font = 'bold 20px sans-serif';
+        context.fillText(hints[i][j], textLeft, textTop);
+			};
 
 			if (index1 != index2) {
 				//	determine if red box is needed around the words
@@ -436,7 +436,7 @@ function drawPuzzle() {
 				scroll_index = (y - x_top)/(SIZE*5-6)*(max - 4)
 				if (scroll_index > max_scroll)
 					scroll_index = max_scroll
-			}}(x_top, max-5)])
+			}}(x_top, max-5)], 'scroll_event')
 		}
   }
 	context.lineWidth = 1;
