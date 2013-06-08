@@ -61,7 +61,6 @@ function newGame() {
    tries++
    if (tries>10000)
      break
-   //console.log('tries: ', tries)
    init();
    var board = puzzle.slice(0);
    for(var i=0; i<COLUMNS; i++) {
@@ -105,7 +104,6 @@ function newGame() {
 $(window).load(function () {
   makeTree()
  $("#setting_panel").hide()
- $("#number_of_words[value=9]").attr('checked', true);
  if (supports_html5_storage()) {
    if(localStorage.fullname)
      $('#fullname').val(localStorage.fullname)
@@ -114,7 +112,7 @@ $(window).load(function () {
  }
 
  window.ondblclick = mouseDoubleClick
- function mouseMove(e) {
+  function mouseMove(e) {
    if(e.originalEvent)
          e=e.originalEvent
         e = e || window.event;

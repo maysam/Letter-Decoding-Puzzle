@@ -35,8 +35,8 @@ var events = []
 function drawMenu() {
 	var left_offset = 0
 	if (isiOS) {
-    	var left = PUZZLE_LEFT-.33*SIZE
-    	var top = PUZZLE_TOP+SIZE*(ROWS+6)
+  	var left = PUZZLE_LEFT-.33*SIZE
+  	var top = PUZZLE_TOP+SIZE*(ROWS+6)
 		context.drawImage($('#backButton')[0], left, top, SIZE*0.9, SIZE*0.9)
 		events.push([left, top, SIZE*0.9, SIZE*0.9, function () { history.go(-1) }])
 		left_offset = SIZE
@@ -59,17 +59,18 @@ function drawMenu() {
 		repeatFlag = false;
 	};
 
-	context.drawImage($('#new-button')[0], left, top, SIZE*1.6, SIZE*0.8)
-	events.push([left, top, SIZE*1.6, SIZE*0.8, function () { if(!$('#loading_panel').is(':visible')) {
-		$('#loading_panel').show()
-		setTimeout(function(){ newGame() }, 1)
-
-		} }])
-
 	if (timing && redWords && redWords.length == 0 && guess_count > 0) {
 		context.drawImage($('#stop-button')[0], left, top, SIZE*1.6, SIZE*0.8)
 		events.push([left, top, SIZE*1.6, SIZE*0.8, function () { stopGame() }])
+	} else {
+		//	can new
+		context.drawImage($('#new-button')[0], left, top, SIZE*1.6, SIZE*0.8)
+		events.push([left, top, SIZE*1.6, SIZE*0.8, function () { if(!$('#loading_panel').is(':visible')) {
+			$('#loading_panel').show()
+			setTimeout(function(){ newGame() }, 1)
+		}}])
 	}
+
 	left = width - SIZE*5
 	context.fillStyle = COLORS[0];
 	context.strokeStyle    = "#666666";
@@ -94,24 +95,24 @@ function drawPuzzle() {
 	events = []
 	context.canvas.width = context.canvas.width;
 	context.textBaseline = 'middle';
-    context.textAlign = "center";
-    context.lineWidth = 1
+  context.textAlign = "center";
+  context.lineWidth = 1
 
 	context.fillStyle = COLORS[0];
 	context.fillRect(PUZZLE_LEFT-SIZE/4, PUZZLE_TOP-SIZE/4, SIZE*COLUMNS+SIZE/2, SIZE*ROWS+SIZE/2);
 	context.strokeStyle  = "#ffCCff";
-    context.lineWidth = 5;
+  context.lineWidth = 5;
 	context.strokeRect(PUZZLE_LEFT-SIZE/8, PUZZLE_TOP -SIZE/8, SIZE*COLUMNS+SIZE/4, SIZE*ROWS+SIZE/4);
-    context.stroke();
-    context.strokeStyle = COLORS[0];
+  context.stroke();
+  context.strokeStyle = COLORS[0];
 
-    redWords = []
-    redLetters = []
-    function Point(i, j) {
-    	this.x = i
-    	this.y = j
-    }
-    possible_empty_spots = []
+  redWords = []
+  redLetters = []
+  function Point(i, j) {
+  	this.x = i
+  	this.y = j
+  }
+  possible_empty_spots = []
 	for(var j=0; j<ROWS; j++) {
 		var is_empty = 0
 		for(var i=0; i<COLUMNS; i++) {
@@ -322,7 +323,7 @@ function drawPuzzle() {
 		for(var i=0; i<COLUMNS; i++) {
 			var left = PUZZLE_LEFT+SIZE*i;
 			var top = PUZZLE_TOP+SIZE*j;
-			if(puzzle[i][j] != null && puzzle[i][j] != -1) {
+			if(puzzle && puzzle[i][j] != null && puzzle[i][j] != -1) {
 				continue
 			}
 			context.drawImage($('#black-tile')[0], left, top, SIZE, SIZE)
@@ -351,24 +352,24 @@ function drawPuzzle() {
 	x_top = null
 	x_left = null
 
-    if (word) {
-    	//	draw line around the selected word to highlight
+  if (word) {
+  	//	draw line around the selected word to highlight
 
-    	context.lineWidth = 3;
-        context.strokeStyle = "#ffffff";
-        context.strokeRect(PUZZLE_LEFT+word.startx*SIZE+1, PUZZLE_TOP+word.starty*SIZE+1, word.xp*word.length*SIZE+SIZE, word.yp*word.length*SIZE+SIZE);
-        context.stroke();
+  	context.lineWidth = 3;
+    context.strokeStyle = "#ffffff";
+    context.strokeRect(PUZZLE_LEFT+word.startx*SIZE+1, PUZZLE_TOP+word.starty*SIZE+1, word.xp*word.length*SIZE+SIZE, word.yp*word.length*SIZE+SIZE);
+    context.stroke();
 
-    	offset = 0;
-        while(offset <= word.length) {
-            index = puzzle[word.startx + offset*word.xp][word.starty + offset*word.yp];
-            if (index != null && index != -1) {
+  	offset = 0;
+    while(offset <= word.length) {
+      index = puzzle[word.startx + offset*word.xp][word.starty + offset*word.yp];
+      if (index != null && index != -1) {
 				g = GROUP[index.charCodeAt(0)-65];
 			} else {
 				g = 0;
 			}
-            drawAlphaBar(g,offset++);
-        }
+      drawAlphaBar(g,offset++);
+    }
 
 
 		max = guesses[current_index].length
@@ -440,7 +441,7 @@ function drawPuzzle() {
 		}
   }
 	context.lineWidth = 1;
-  drawMenu()
+	drawMenu()
 }
 var animatingOffset = -1
 var animatingChar = undefined
